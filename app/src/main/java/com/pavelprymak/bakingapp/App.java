@@ -5,11 +5,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+import com.pavelprymak.bakingapp.data.FileToPOJOConverter;
+import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
+
+import java.io.IOException;
+
 import timber.log.Timber;
 
 public class App extends Application {
     public static final String CHANNEL_ID = "BakingPlayerChannel";
     public static final String CHANNEL_NAME = "Baking App Player Channel";
+    public static RecipeItem[] recipes;
 
     @Override
     public void onCreate() {
@@ -18,6 +24,7 @@ public class App extends Application {
             Timber.plant(new Timber.DebugTree());
         }
         createNotificationChannel();
+        loadRecipesDataFromFile();
     }
 
     private void createNotificationChannel() {
@@ -30,6 +37,14 @@ public class App extends Application {
 
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
+        }
+    }
+
+    private void loadRecipesDataFromFile(){
+        try {
+            recipes = FileToPOJOConverter.getRecipes(this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

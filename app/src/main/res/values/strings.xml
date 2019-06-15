@@ -14,7 +14,15 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
 
+    <string name="btn_prev">Prev Step</string>
+    <string name="btn_next">Next Step</string>
+    <string name="error_step_load">Loading current step error :-(</string>
+    <string name="error_step_next">This is the last step</string>
+    <string name="error_step_prev">This is the first step</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="restart">Restart</string>
+    <string name="rewind">Rewind</string>
+    <string name="fast_forward">Fast Forward</string>
+    <string name="error_video_url">Sorry, video URL is Empty</string>
 </resources>

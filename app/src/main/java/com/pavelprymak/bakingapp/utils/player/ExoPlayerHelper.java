@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -19,7 +18,6 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -64,9 +62,9 @@ public class ExoPlayerHelper implements Player.EventListener {
      *
      * @param mediaUri The URI of the sample to play.
      */
+
     public void initializePlayer(Uri mediaUri) {
         if (mExoPlayer == null) {
-
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
@@ -75,11 +73,6 @@ public class ExoPlayerHelper implements Player.EventListener {
 
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
-
-
-            /*MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    this, userAgent), new DefaultExtractorsFactory(), null, null);*/
-            mExoPlayer.setPlayWhenReady(true);
         }
         if (mAudioFocusHelper == null) {
             //AUDIO FOCUS PREPARE
@@ -92,13 +85,21 @@ public class ExoPlayerHelper implements Player.EventListener {
         // Prepare the MediaSource.
         String userAgent = Util.getUserAgent(mContext, "BakingApp");
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(mContext, userAgent)).createMediaSource(mediaUri);
-
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) {
             mExoPlayer.seekTo(resumeWindow, resumePosition);
         }
         if (mAudioFocusHelper.requestAudioFocus()) {
             mExoPlayer.prepare(mediaSource, !haveResumePosition, false);
+        }
+        //start player
+        mExoPlayer.setPlayWhenReady(true);
+    }
+
+    public void stopCurrentVideo() {
+        if (mExoPlayer != null) {
+            mExoPlayer.stop(true);
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 
