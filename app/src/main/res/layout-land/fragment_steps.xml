@@ -42,7 +42,7 @@
                 android:id="@+id/stepInfoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/main_margin"
                 android:orientation="vertical"
                 android:scrollbars="vertical">
 
@@ -51,9 +51,9 @@
                     style="@style/AppTheme.TextTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="@dimen/main_margin"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteX="@dimen/main_margin"
                     tools:text="Step Title" />
 
                 <TextView
@@ -61,7 +61,7 @@
                     style="@style/AppTheme.TextMain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="@dimen/main_margin"
                     android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toTopOf="@+id/prevStepBtn"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                     style="@style/AppTheme.BtnStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="@dimen/main_margin"
                     android:text="@string/btn_prev"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -86,7 +86,7 @@
                     style="@style/AppTheme.BtnStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="@dimen/main_margin"
                     android:text="@string/btn_next"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
