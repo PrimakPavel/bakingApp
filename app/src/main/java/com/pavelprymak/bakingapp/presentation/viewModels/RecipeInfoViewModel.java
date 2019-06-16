@@ -1,4 +1,4 @@
-package com.pavelprymak.bakingapp.viewModels;
+package com.pavelprymak.bakingapp.presentation.viewModels;
 
 import androidx.lifecycle.ViewModel;
 
@@ -8,10 +8,11 @@ import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
 import java.util.List;
 
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
+
 public class RecipeInfoViewModel extends ViewModel {
 
     private RepoImpl mRepo = new RepoImpl();
-    private static final int INVALID_RECIPE_ID = -1;
     private List<IngredientsItem> mIngredients;
     private List<StepsItem> mSteps;
     private int mRecipeId = INVALID_RECIPE_ID;

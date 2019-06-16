@@ -1,4 +1,4 @@
-package com.pavelprymak.bakingapp.ui.adapters;
+package com.pavelprymak.bakingapp.presentation.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

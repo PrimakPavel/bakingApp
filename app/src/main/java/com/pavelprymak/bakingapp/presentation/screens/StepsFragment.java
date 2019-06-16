@@ -1,4 +1,4 @@
-package com.pavelprymak.bakingapp.ui;
+package com.pavelprymak.bakingapp.presentation.screens;
 
 
 import android.content.res.Configuration;
@@ -18,15 +18,34 @@ import androidx.lifecycle.ViewModelProviders;
 import com.pavelprymak.bakingapp.R;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import com.pavelprymak.bakingapp.databinding.FragmentStepsBinding;
+import com.pavelprymak.bakingapp.presentation.viewModels.StepsViewModel;
 import com.pavelprymak.bakingapp.utils.activity.ActivityHelper;
 import com.pavelprymak.bakingapp.utils.player.ExoPlayerHelper;
-import com.pavelprymak.bakingapp.viewModels.StepsViewModel;
+
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_ID;
 
 public class StepsFragment extends Fragment {
+    private static final String ARG_RECIPE_ID = "argRecipeId";
+    private static final String ARG_STEP_ID = "argStepId";
+
+    private int mRecipeId = INVALID_RECIPE_ID;
+    private int mStepId = INVALID_STEP_ID;
+
+
     private FragmentStepsBinding mBinding;
     private ExoPlayerHelper mPlayerHelper;
     private StepsViewModel mStepsViewModel;
     private static final int FIRST_RECIPE_ID = 1;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mRecipeId = getArguments().getInt(ARG_RECIPE_ID, INVALID_RECIPE_ID);
+            mStepId = getArguments().getInt(ARG_STEP_ID, INVALID_STEP_ID);
+        }
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

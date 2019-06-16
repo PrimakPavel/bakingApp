@@ -1,4 +1,4 @@
-package com.pavelprymak.bakingapp.viewModels;
+package com.pavelprymak.bakingapp.presentation.viewModels;
 
 import androidx.lifecycle.ViewModel;
 

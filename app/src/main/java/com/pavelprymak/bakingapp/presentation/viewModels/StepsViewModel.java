@@ -1,4 +1,4 @@
-package com.pavelprymak.bakingapp.viewModels;
+package com.pavelprymak.bakingapp.presentation.viewModels;
 
 
 import androidx.lifecycle.ViewModel;
@@ -8,9 +8,10 @@ import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
 import java.util.List;
 
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_ID;
+
 public class StepsViewModel extends ViewModel {
-    private static final int INVALID_STEP_ID = -1;
-    private static final int INVALID_RECIPE_ID = -1;
     private static final int FIRST_POSITION = 0;
 
 
