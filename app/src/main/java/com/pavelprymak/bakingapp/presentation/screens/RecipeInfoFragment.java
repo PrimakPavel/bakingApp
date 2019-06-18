@@ -41,8 +41,8 @@ import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_ST
 public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickListener {
     private static final String SAVE_INSTANCE_SELECTED_STEP_ID = "saveInstanceSelectedStepId";
     private static final int SCROLL_TO_ELEMENT_DELAY_MS = 500;
-    static final String ARG_RECIPE_ID = "argRecipeId";
-    static final String ARG_RECIPE_TITLE = "argRecipeTitle";
+    public static final String ARG_RECIPE_ID = "argRecipeId";
+    public static final String ARG_RECIPE_TITLE = "argRecipeTitle";
     private FragmentRecipeInfoBinding mBinding;
     private RecipeInfoViewModel mInfoViewModel;
     private RecipeInfoAdapter mAdapter;

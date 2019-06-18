@@ -1,9 +1,7 @@
 package com.pavelprymak.bakingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +13,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
+import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
+import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_TITLE;
 
 public class MainActivity extends AppCompatActivity {
     public NavController mNavController;
@@ -42,6 +44,23 @@ public class MainActivity extends AppCompatActivity {
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navigationView, mNavController);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mDrawer);
+        if(savedInstanceState==null) {
+            implementInputIntent(getIntent());
+        }
+    }
+
+
+    private void implementInputIntent(Intent intent) {
+        if (intent.getExtras() != null) {
+            int recipeId = intent.getExtras().getInt(ARG_RECIPE_ID, INVALID_RECIPE_ID);
+            if (recipeId != INVALID_RECIPE_ID) {
+                String recipeName = intent.getExtras().getString(ARG_RECIPE_TITLE);
+                Bundle bundle = new Bundle();
+                bundle.putInt(ARG_RECIPE_ID, recipeId);
+                bundle.putString(ARG_RECIPE_TITLE, recipeName);
+                mNavController.navigate(R.id.recipeInfoFragment, bundle);
+            }
+        }
     }
 
     @Override

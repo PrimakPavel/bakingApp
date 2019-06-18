@@ -3,7 +3,7 @@ package com.pavelprymak.bakingapp.presentation.viewModels;
 import androidx.lifecycle.ViewModel;
 
 import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
-import com.pavelprymak.bakingapp.data.pojo.RepoImpl;
+import com.pavelprymak.bakingapp.data.RepoImpl;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
 import java.util.List;

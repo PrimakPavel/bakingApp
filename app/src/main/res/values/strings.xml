@@ -21,5 +21,8 @@
     <string name="error_video_url">Sorry, video URL is Empty</string>
     <string name="recipe_label">Recipe</string>
     <string name="ingredients_label">Ingredients:</string>
+    <string name="appwidget_text">Recipe Name</string>
+    <string name="empty_fields">Empty!</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

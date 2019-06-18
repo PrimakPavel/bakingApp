@@ -1,24 +1,21 @@
-package com.pavelprymak.bakingapp.data.pojo;
+package com.pavelprymak.bakingapp.data;
 
 import com.pavelprymak.bakingapp.App;
-import com.pavelprymak.bakingapp.data.Repo;
+import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
+import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
+import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RepoImpl implements Repo {
     @Override
     public List<RecipeItem> getRecipes() {
-        RecipeItem[] recipes = App.recipes;
-        if (recipes != null) {
-            return Arrays.asList(recipes);
-        }
-        return null;
+        return App.recipes;
     }
 
     @Override
     public List<IngredientsItem> getIngredientsById(int recipeId) {
-        RecipeItem[] recipes = App.recipes;
+        List<RecipeItem> recipes = App.recipes;
         if (recipes != null) {
             for (RecipeItem recipeItem : recipes) {
                 if (recipeItem != null && recipeItem.getId() == recipeId) {
@@ -31,7 +28,7 @@ public class RepoImpl implements Repo {
 
     @Override
     public List<StepsItem> getStepsById(int recipeId) {
-        RecipeItem[] recipes = App.recipes;
+        List<RecipeItem> recipes = App.recipes;
         if (recipes != null) {
             for (RecipeItem recipeItem : recipes) {
                 if (recipeItem != null && recipeItem.getId() == recipeId) {
