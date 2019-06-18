@@ -36,7 +36,9 @@ import com.pavelprymak.bakingapp.utils.player.audioFocus.AudioFocusHelper;
 import com.pavelprymak.bakingapp.utils.player.audioFocus.ExoAudioFocusListener;
 import com.pavelprymak.bakingapp.utils.player.mediaSession.MediaSessionHelper;
 
-public class ExoPlayerHelper implements Player.EventListener {
+public class PlayerHelper implements Player.EventListener {
+    public static final int DEFAULT_RESUME_WINDOW = C.INDEX_UNSET;
+    public static final long DEFAULT_RESUME_POSITION = C.TIME_UNSET;
     private SimpleExoPlayer mExoPlayer;
     private PlayerView mPlayerView;
     private ProgressBar mProgressBar;
@@ -48,10 +50,10 @@ public class ExoPlayerHelper implements Player.EventListener {
     private MediaSessionHelper mMediaSessionHelper;
 
 
-    private static int resumeWindow = C.INDEX_UNSET;
-    private static long resumePosition = C.TIME_UNSET;
+    private int resumeWindow = DEFAULT_RESUME_WINDOW;
+    private long resumePosition = DEFAULT_RESUME_POSITION;
 
-    public ExoPlayerHelper(Context context, PlayerView mPlayerView, ProgressBar progressBar) {
+    public PlayerHelper(Context context, PlayerView mPlayerView, ProgressBar progressBar) {
         mContext = context;
         this.mPlayerView = mPlayerView;
         mProgressBar = progressBar;
@@ -130,6 +132,19 @@ public class ExoPlayerHelper implements Player.EventListener {
     public void clearResumePosition() {
         resumeWindow = C.INDEX_UNSET;
         resumePosition = C.TIME_UNSET;
+    }
+
+    public void setResumePosition(int resWindow, long resPosition) {
+        resumeWindow = resWindow;
+        resumePosition = resPosition;
+    }
+
+    public int getCurrentResumeWindow() {
+        return resumeWindow;
+    }
+
+    public long getCurrentResumePosition() {
+        return resumePosition;
     }
 
 

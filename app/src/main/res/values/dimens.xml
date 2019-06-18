@@ -16,7 +16,7 @@
     <dimen name="small_text_size">12sp</dimen>
 
 
-    <dimen name="recipe_item_height">60dp</dimen>
+    <dimen name="recipe_item_height">120dp</dimen>
     <dimen name="step_item_height">60dp</dimen>
 
 </resources>

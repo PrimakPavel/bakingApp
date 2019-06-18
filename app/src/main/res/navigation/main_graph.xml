@@ -8,16 +8,14 @@
     <fragment
         android:id="@+id/recipeCardFragment"
         android:name="com.pavelprymak.bakingapp.presentation.screens.RecipeCardFragment"
-        android:label="fragment_recipe_card"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_recipe_card" />
     <fragment
         android:id="@+id/recipeInfoFragment"
         android:name="com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment"
-        android:label="fragment_recipe_info"
         tools:layout="@layout/fragment_recipe_info" />
     <fragment
         android:id="@+id/stepsFragment"
         android:name="com.pavelprymak.bakingapp.presentation.screens.StepsFragment"
-        android:label="fragment_steps"
         tools:layout="@layout/fragment_steps" />
 </navigation>

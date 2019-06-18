@@ -13,7 +13,6 @@ import com.pavelprymak.bakingapp.R;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.databinding.ItemViewRecipeCardBinding;
 
-
 import java.util.List;
 
 public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.RecipeCardViewHolder> {
@@ -78,7 +77,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
             if (mRecipes != null) {
                 RecipeItem recipeItem = mRecipes.get(getAdapterPosition());
                 if (recipeItem != null) {
-                    clickListener.onRecipeCardItemClick(recipeItem.getId());
+                    clickListener.onRecipeCardItemClick(recipeItem.getId(), recipeItem.getName());
                 }
             }
         }

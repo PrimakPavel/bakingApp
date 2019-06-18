@@ -16,6 +16,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pavelprymak.bakingapp.MainActivity;
 import com.pavelprymak.bakingapp.R;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.databinding.FragmentRecipeCardBinding;
@@ -26,6 +27,7 @@ import com.pavelprymak.bakingapp.presentation.viewModels.RecipeCardViewModel;
 import java.util.List;
 
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
+import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_TITLE;
 
 
 public class RecipeCardFragment extends Fragment implements RecipeCardItemClickListener {
@@ -44,6 +46,9 @@ public class RecipeCardFragment extends Fragment implements RecipeCardItemClickL
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setHomeBtnEnable(false);
+        }
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_card, container, false);
         mRecipeCardViewModel = ViewModelProviders.of(this).get(RecipeCardViewModel.class);
         return mBinding.getRoot();
@@ -69,9 +74,10 @@ public class RecipeCardFragment extends Fragment implements RecipeCardItemClickL
     }
 
     @Override
-    public void onRecipeCardItemClick(int recipeId) {
+    public void onRecipeCardItemClick(int recipeId, String recipeTitle) {
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_RECIPE_ID, recipeId);
+        bundle.putString(ARG_RECIPE_TITLE, recipeTitle);
         mNavController.navigate(R.id.recipeInfoFragment, bundle);
     }
 }

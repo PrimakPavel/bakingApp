@@ -11,39 +11,57 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.pavelprymak.bakingapp.App;
+import com.pavelprymak.bakingapp.MainActivity;
 import com.pavelprymak.bakingapp.R;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import com.pavelprymak.bakingapp.databinding.FragmentStepsBinding;
 import com.pavelprymak.bakingapp.presentation.viewModels.StepsViewModel;
 import com.pavelprymak.bakingapp.utils.activity.ActivityHelper;
-import com.pavelprymak.bakingapp.utils.player.ExoPlayerHelper;
+import com.pavelprymak.bakingapp.utils.otto.EventOnStepItemClick;
+import com.pavelprymak.bakingapp.utils.player.PlayerHelper;
+import com.squareup.otto.Subscribe;
 
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_ID;
+import static com.pavelprymak.bakingapp.utils.player.PlayerHelper.DEFAULT_RESUME_POSITION;
+import static com.pavelprymak.bakingapp.utils.player.PlayerHelper.DEFAULT_RESUME_WINDOW;
 
 public class StepsFragment extends Fragment {
-    private static final String ARG_RECIPE_ID = "argRecipeId";
-    private static final String ARG_STEP_ID = "argStepId";
+    static final String ARG_RECIPE_ID = "argRecipeId";
+    static final String ARG_STEP_ID = "argStepId";
+    static final String ARG_RECIPE_TITLE = "argRecipeTitle";
+    private static final String SAVE_INSTANCE_RESUME_POSITION = "saveInstanceResumePosition";
+    private static final String SAVE_INSTANCE_RESUME_WINDOW = "saveInstanceResumeWindow";
+    private int mResumeWindow = DEFAULT_RESUME_WINDOW;
+    private long mResumePosition = DEFAULT_RESUME_POSITION;
 
     private int mRecipeId = INVALID_RECIPE_ID;
     private int mStepId = INVALID_STEP_ID;
+    private String mRecipeTitle;
 
 
     private FragmentStepsBinding mBinding;
-    private ExoPlayerHelper mPlayerHelper;
+    private PlayerHelper mPlayerHelper;
     private StepsViewModel mStepsViewModel;
-    private static final int FIRST_RECIPE_ID = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mRecipeId = getArguments().getInt(ARG_RECIPE_ID, INVALID_RECIPE_ID);
+            mRecipeTitle = getArguments().getString(ARG_RECIPE_TITLE);
             mStepId = getArguments().getInt(ARG_STEP_ID, INVALID_STEP_ID);
+        }
+        if (savedInstanceState != null) {
+            mResumePosition = savedInstanceState.getLong(SAVE_INSTANCE_RESUME_POSITION, DEFAULT_RESUME_POSITION);
+            mResumeWindow = savedInstanceState.getInt(SAVE_INSTANCE_RESUME_WINDOW, DEFAULT_RESUME_WINDOW);
         }
     }
 
@@ -52,6 +70,9 @@ public class StepsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // WAKE_LOCK ON
         ActivityHelper.setWakeLock(getActivity(), true);
+
+        if (getResources().getBoolean(R.bool.isTablet)) return;
+
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             ActivityHelper.setAppBarVisibility(getActivity(), false);
@@ -62,10 +83,21 @@ public class StepsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setHomeBtnEnable(true);
+        }
+        App.eventBus.register(this);
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_steps, container, false);
         mStepsViewModel = ViewModelProviders.of(this).get(StepsViewModel.class);
-        mStepsViewModel.prepareStepsByRecipeId(FIRST_RECIPE_ID);
+        if (savedInstanceState == null) {
+            if (mRecipeId != INVALID_RECIPE_ID) {
+                mStepsViewModel.prepareStepsByRecipeId(mRecipeId);
+            }
+            if (mStepId != INVALID_STEP_ID) {
+                mStepsViewModel.setCurrentStepId(mStepId);
+            }
+        }
         return mBinding.getRoot();
     }
 
@@ -73,22 +105,21 @@ public class StepsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (mRecipeTitle != null && !mRecipeTitle.isEmpty()) {
+            setAppBarTitle(mRecipeTitle);
+        }
         mBinding.nextStepBtn.setOnClickListener(v -> showNextStep());
         mBinding.prevStepBtn.setOnClickListener(v -> showPrevStep());
-
     }
 
-    private void showStepInfo(StepsItem stepItem, boolean resetVideoPosition) {
+    private void showStepInfo(StepsItem stepItem, int resumeWindow, long resumePosition) {
         if (mPlayerHelper == null) {
-            mPlayerHelper = new ExoPlayerHelper(getContext(), mBinding.playerView, mBinding.progressBar);
+            mPlayerHelper = new PlayerHelper(getContext(), mBinding.playerView, mBinding.progressBar);
         }
         String stepVideoUrl = stepItem.getVideoURL();
         mPlayerHelper.stopCurrentVideo();
-        if (resetVideoPosition) {
-            mPlayerHelper.clearResumePosition();
-        }
+        mPlayerHelper.setResumePosition(resumeWindow, resumePosition);
         if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-
             Uri uri = Uri.parse(stepVideoUrl);
             mPlayerHelper.initializePlayer(uri);
             if (stepItem.getShortDescription() != null) {
@@ -96,6 +127,7 @@ public class StepsFragment extends Fragment {
             }
         } else {
             Toast.makeText(getContext(), R.string.error_video_url, Toast.LENGTH_LONG).show();
+
         }
         mBinding.descriptionShortTv.setText(stepItem.getShortDescription());
         mBinding.descriptionTv.setText(stepItem.getDescription());
@@ -107,7 +139,7 @@ public class StepsFragment extends Fragment {
         //Load current step
         StepsItem currentStepItem = mStepsViewModel.getCurrentStep();
         if (currentStepItem != null) {
-            showStepInfo(currentStepItem, false);
+            showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
         } else {
             Toast.makeText(getContext(), R.string.error_step_load, Toast.LENGTH_LONG).show();
         }
@@ -118,23 +150,44 @@ public class StepsFragment extends Fragment {
         super.onPause();
         if (mPlayerHelper != null) {
             mPlayerHelper.releasePlayer();
+            mResumeWindow = mPlayerHelper.getCurrentResumeWindow();
+            mResumePosition = mPlayerHelper.getCurrentResumePosition();
             mPlayerHelper = null;
         }
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SAVE_INSTANCE_RESUME_WINDOW, mResumeWindow);
+        outState.putLong(SAVE_INSTANCE_RESUME_POSITION, mResumePosition);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
+        App.eventBus.unregister(this);
         ActivityHelper.setWakeLock(getActivity(), false);
         ActivityHelper.setAppBarVisibility(getActivity(), true);
         ActivityHelper.setFullScreen(getActivity(), false);
     }
 
+    @Subscribe
+    public void onStepItemClick(EventOnStepItemClick event) {
+        if (event.getRecipeId() != mRecipeId || event.getStepId() != mStepId) {
+            mStepsViewModel.prepareStepsByRecipeId(event.getRecipeId());
+            mStepsViewModel.setCurrentStepId(event.getStepId());
+            StepsItem currentStep = mStepsViewModel.getCurrentStep();
+            if (currentStep != null) {
+                showStepInfo(currentStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
+            }
+        }
+    }
 
     private void showNextStep() {
         StepsItem nextStep = mStepsViewModel.getNextStep();
         if (nextStep != null) {
-            showStepInfo(nextStep, true);
+            showStepInfo(nextStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
         } else {
             Toast.makeText(getContext(), R.string.error_step_next, Toast.LENGTH_LONG).show();
         }
@@ -143,9 +196,18 @@ public class StepsFragment extends Fragment {
     private void showPrevStep() {
         StepsItem prevStep = mStepsViewModel.getPrevStep();
         if (prevStep != null) {
-            showStepInfo(prevStep, true);
+            showStepInfo(prevStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
         } else {
             Toast.makeText(getContext(), R.string.error_step_prev, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setAppBarTitle(String title) {
+        if (getActivity() instanceof AppCompatActivity) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(title);
+            }
         }
     }
 }

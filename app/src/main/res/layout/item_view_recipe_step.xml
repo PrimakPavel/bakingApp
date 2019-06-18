@@ -4,7 +4,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/step_item_height">
+        android:background="@drawable/background_recycler_step"
+        android:layout_height="wrap_content">
 
         <TextView
             style="@style/AppTheme.TextTitle"
@@ -14,5 +15,9 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="@dimen/main_margin"
             tools:text="Recipe description" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
     </FrameLayout>
 </layout>

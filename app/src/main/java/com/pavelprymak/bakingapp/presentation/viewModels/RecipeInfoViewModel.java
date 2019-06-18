@@ -9,6 +9,7 @@ import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import java.util.List;
 
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_POSITION;
 
 public class RecipeInfoViewModel extends ViewModel {
 
@@ -33,5 +34,17 @@ public class RecipeInfoViewModel extends ViewModel {
 
     public List<StepsItem> getSteps() {
         return mSteps;
+    }
+
+    public int getPositionByStepId(int stepId) {
+        if (mSteps != null) {
+            for (int i = 0; i < mSteps.size(); i++) {
+                StepsItem stepsItem = mSteps.get(i);
+                if (stepsItem != null && stepId == stepsItem.getId()) {
+                    return i;
+                }
+            }
+        }
+        return INVALID_STEP_POSITION;
     }
 }

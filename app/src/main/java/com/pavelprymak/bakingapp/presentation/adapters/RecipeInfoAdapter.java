@@ -17,7 +17,11 @@ import com.pavelprymak.bakingapp.databinding.ItemViewRecipeStepBinding;
 
 import java.util.List;
 
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_ID;
+
 public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int SHIFT_FOR_STEPS_LIST = 1;
+
     private List<StepsItem> mSteps;
     private List<IngredientsItem> mIngredients;
     private RecipeStepItemClickListener clickListener;
@@ -26,8 +30,16 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int INGREDIENTS_VH_ID = 2;
 
 
+    private int mSelectedStepId = INVALID_STEP_ID;
+
+
     public RecipeInfoAdapter(RecipeStepItemClickListener clickListener) {
         this.clickListener = clickListener;
+    }
+
+    public void setSelectedStepId(int stepId) {
+        mSelectedStepId = stepId;
+        notifyDataSetChanged();
     }
 
     public void updateList(List<StepsItem> steps, List<IngredientsItem> ingredients) {
@@ -35,6 +47,7 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mIngredients = ingredients;
         notifyDataSetChanged();
     }
+
 
     @NonNull
     @Override
@@ -76,23 +89,26 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        if (mSteps == null) return 1;
-        else return mSteps.size() + 1;
+        if (mSteps == null) return SHIFT_FOR_STEPS_LIST;
+        else return mSteps.size() + SHIFT_FOR_STEPS_LIST;
     }
 
     class RecipeStepViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemViewRecipeStepBinding binding;
         private static final String EMPTY = "";
+        private View itemView;
 
         RecipeStepViewHolder(@NonNull ItemViewRecipeStepBinding stepBinding) {
             super(stepBinding.getRoot());
             this.binding = stepBinding;
-            stepBinding.getRoot().setOnClickListener(this);
+            itemView = stepBinding.getRoot();
+            itemView.setOnClickListener(this);
         }
 
         void bind(int position) {
-            StepsItem stepsItem = mSteps.get(position - 1);
+            StepsItem stepsItem = mSteps.get(position - SHIFT_FOR_STEPS_LIST);
             if (stepsItem != null && mContext != null) {
+                itemView.setSelected(stepsItem.getId() == mSelectedStepId);
                 //Content
                 if (stepsItem.getShortDescription() != null) {
                     binding.stepDescription.setText(stepsItem.getShortDescription());
@@ -105,11 +121,14 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @Override
         public void onClick(View v) {
             if (mSteps != null) {
-                StepsItem stepsItem = mSteps.get(getAdapterPosition());
+                StepsItem stepsItem = mSteps.get(getAdapterPosition() - SHIFT_FOR_STEPS_LIST);
                 if (stepsItem != null) {
+                    mSelectedStepId = stepsItem.getId();
+                    notifyDataSetChanged();
                     clickListener.onRecipeStepItemClick(stepsItem.getId());
                 }
             }
+
         }
     }
 
@@ -125,12 +144,28 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         void bind() {
             //Content
             if (mIngredients != null && mIngredients.size() > 0) {
-                binding.ingredientsTv.setText(mIngredients.toString());
+                binding.ingredientsTv.setText(createIngredientsStr());
             } else {
                 binding.ingredientsTv.setText(EMPTY);
             }
         }
 
+        private String createIngredientsStr() {
+            StringBuilder ingredientsStringBuilder = new StringBuilder(mContext.getString(R.string.ingredients_label));
+            ingredientsStringBuilder.append("\n\n\n");
+            for (int i = 0; i < mIngredients.size(); i++) {
+                IngredientsItem ingredient = mIngredients.get(i);
+                if (ingredient != null) {
+                    ingredientsStringBuilder.append(i + 1).append(". ");
+                    ingredientsStringBuilder.append(ingredient.getIngredient());
+                    ingredientsStringBuilder.append(" ");
+                    ingredientsStringBuilder.append(ingredient.getQuantity());
+                    ingredientsStringBuilder.append(ingredient.getMeasure());
+                    ingredientsStringBuilder.append(";\n");
+                }
+            }
+            return ingredientsStringBuilder.toString();
+        }
     }
 }
 

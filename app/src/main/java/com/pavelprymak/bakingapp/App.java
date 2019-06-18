@@ -7,6 +7,7 @@ import android.os.Build;
 
 import com.pavelprymak.bakingapp.data.FileToPOJOConverter;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
+import com.squareup.otto.Bus;
 
 import java.io.IOException;
 
@@ -16,6 +17,7 @@ public class App extends Application {
     public static final String CHANNEL_ID = "BakingPlayerChannel";
     public static final String CHANNEL_NAME = "Baking App Player Channel";
     public static RecipeItem[] recipes;
+    public static Bus eventBus = new Bus();
 
     @Override
     public void onCreate() {

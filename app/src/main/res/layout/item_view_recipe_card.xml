@@ -4,16 +4,23 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_margin="@dimen/main_margin"
         android:layout_height="@dimen/recipe_item_height"
+        android:background="@drawable/background_recycler_recipe_card"
         android:orientation="vertical">
 
         <TextView
             style="@style/AppTheme.TextTitle"
             android:id="@+id/recipeTitle"
             android:layout_width="wrap_content"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             tools:text="Recipe Title" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
 
     </FrameLayout>
 </layout>
