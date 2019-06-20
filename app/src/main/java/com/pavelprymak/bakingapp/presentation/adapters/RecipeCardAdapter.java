@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.bakingapp.R;
+import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.databinding.ItemViewRecipeCardBinding;
 
@@ -69,6 +70,11 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
                 } else {
                     binding.recipeTitle.setText(EMPTY);
                 }
+                if (mContext != null && recipeItem.getIngredients() != null && recipeItem.getIngredients().size() > 0) {
+                    binding.recipeIngredients.setText(createIngredientsStr(mContext, recipeItem.getIngredients()));
+                } else {
+                    binding.recipeIngredients.setText(EMPTY);
+                }
             }
         }
 
@@ -81,6 +87,22 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
                 }
             }
         }
+    }
+
+    public static String createIngredientsStr(@NonNull Context context, @NonNull List<IngredientsItem> ingredients) {
+        StringBuilder ingredientsStringBuilder = new StringBuilder(context.getString(R.string.ingredients_label));
+        for (int i = 0; i < ingredients.size(); i++) {
+            IngredientsItem ingredient = ingredients.get(i);
+            if (ingredient != null) {
+                ingredientsStringBuilder.append(ingredient.getIngredient());
+                if (i < ingredients.size() - 1) {
+                    ingredientsStringBuilder.append(", ");
+                } else {
+                    ingredientsStringBuilder.append(";");
+                }
+            }
+        }
+        return ingredientsStringBuilder.toString();
     }
 }
 

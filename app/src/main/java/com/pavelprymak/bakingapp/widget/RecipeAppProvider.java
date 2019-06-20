@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import androidx.annotation.NonNull;
+
 import com.pavelprymak.bakingapp.MainActivity;
 import com.pavelprymak.bakingapp.R;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import static com.pavelprymak.bakingapp.presentation.adapters.RecipeCardAdapter.createIngredientsStr;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_TITLE;
 
@@ -22,13 +25,13 @@ import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.
  */
 public class RecipeAppProvider extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, RecipeItem recipe) {
+    static void updateAppWidget(@NonNull Context context, AppWidgetManager appWidgetManager,
+                                int appWidgetId, @NonNull RecipeItem recipe) {
         Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
         int height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
         int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
         RemoteViews rv;
-        if (height < 110 || width < 200) {
+        if (height < 300 || width < 200) {
             rv = getSingleRemoteViews(context, recipe);
         } else {
             rv = getRecipeGridRemoteView(context);
@@ -38,14 +41,17 @@ public class RecipeAppProvider extends AppWidgetProvider {
     }
 
     @NotNull
-    private static RemoteViews getSingleRemoteViews(Context context, RecipeItem recipe) {
+    private static RemoteViews getSingleRemoteViews(@NonNull Context context, @NonNull RecipeItem recipe) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_app_provider);
-        views.setTextViewText(R.id.appwidget_text, recipe.getName());
+        views.setTextViewText(R.id.app_w_recipe_title, recipe.getName());
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra(ARG_RECIPE_ID, recipe.getId());
         intent.putExtra(ARG_RECIPE_TITLE, recipe.getName());
+        if (recipe.getIngredients() != null && recipe.getIngredients().size() > 0) {
+            views.setTextViewText(R.id.app_w_recipe_ingredients, createIngredientsStr(context, recipe.getIngredients()));
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
+        views.setOnClickPendingIntent(R.id.app_w_recipe_title, pendingIntent);
         return views;
     }
 
@@ -54,8 +60,8 @@ public class RecipeAppProvider extends AppWidgetProvider {
         RecipeUpdateWidgetService.startActionUpdateRecipesWidgets(context);
     }
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int[] appWidgetIds, RecipeItem recipe) {
+    static void updateAppWidget(@NonNull Context context, AppWidgetManager appWidgetManager,
+                                int[] appWidgetIds, @NonNull RecipeItem recipe) {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId, recipe);
         }

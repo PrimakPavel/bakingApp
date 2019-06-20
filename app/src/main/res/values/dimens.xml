@@ -3,12 +3,11 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="main_margin">16dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
 
     <!-- TEXT SIZEs -->
-    <dimen name="description_title_text_size">24sp</dimen>
     <dimen name="large_title_text_size">20sp</dimen>
     <dimen name="main_title_text_size">16sp</dimen>
     <dimen name="main_text_size">14sp</dimen>

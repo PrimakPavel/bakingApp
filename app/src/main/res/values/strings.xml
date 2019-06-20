@@ -4,10 +4,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Baking App</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
     <string name="menu_home">Home</string>
-
     <string name="btn_prev">Prev Step</string>
     <string name="btn_next">Next Step</string>
     <string name="error_step_load">Loading current step error :-(</string>
@@ -21,7 +18,8 @@
     <string name="error_video_url">Sorry, video URL is Empty</string>
     <string name="recipe_label">Recipe</string>
     <string name="ingredients_label">Ingredients:</string>
-    <string name="appwidget_text">Recipe Name</string>
+    <string name="appwidget_title">Recipe Name</string>
+    <string name="appwidget_ingredients">Ingredients:</string>
     <string name="empty_fields">Empty!</string>
     <string name="add_widget">Add widget</string>
 

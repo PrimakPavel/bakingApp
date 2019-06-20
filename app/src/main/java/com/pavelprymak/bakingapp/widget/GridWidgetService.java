@@ -12,6 +12,7 @@ import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 
 import java.util.List;
 
+import static com.pavelprymak.bakingapp.presentation.adapters.RecipeCardAdapter.createIngredientsStr;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_TITLE;
 
@@ -72,8 +73,10 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         extras.putString(ARG_RECIPE_TITLE, recipe.getName());
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
-        views.setOnClickFillInIntent(R.id.appwidget_text, fillInIntent);
-        views.setTextViewText(R.id.appwidget_text, recipe.getName());
+        views.setOnClickFillInIntent(R.id.app_w_recipe_title, fillInIntent);
+        if (mContext != null && recipe.getIngredients() != null && recipe.getIngredients().size() > 0) {
+        views.setTextViewText(R.id.app_w_recipe_ingredients, createIngredientsStr(mContext, recipe.getIngredients()));}
+        views.setTextViewText(R.id.app_w_recipe_title, recipe.getName());
         return views;
 
     }

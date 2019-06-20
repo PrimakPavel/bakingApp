@@ -50,6 +50,7 @@ public class StepsFragment extends Fragment {
     private FragmentStepsBinding mBinding;
     private PlayerHelper mPlayerHelper;
     private StepsViewModel mStepsViewModel;
+    private Toast mToast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,7 +127,7 @@ public class StepsFragment extends Fragment {
                 mPlayerHelper.setMediaDescriptionText(stepItem.getShortDescription());
             }
         } else {
-            Toast.makeText(getContext(), R.string.error_video_url, Toast.LENGTH_LONG).show();
+            showToast(R.string.error_video_url);
 
         }
         mBinding.descriptionShortTv.setText(stepItem.getShortDescription());
@@ -141,7 +142,7 @@ public class StepsFragment extends Fragment {
         if (currentStepItem != null) {
             showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
         } else {
-            Toast.makeText(getContext(), R.string.error_step_load, Toast.LENGTH_LONG).show();
+            showToast(R.string.error_step_load);
         }
     }
 
@@ -189,7 +190,7 @@ public class StepsFragment extends Fragment {
         if (nextStep != null) {
             showStepInfo(nextStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
         } else {
-            Toast.makeText(getContext(), R.string.error_step_next, Toast.LENGTH_LONG).show();
+            showToast(R.string.error_step_next);
         }
     }
 
@@ -198,7 +199,7 @@ public class StepsFragment extends Fragment {
         if (prevStep != null) {
             showStepInfo(prevStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
         } else {
-            Toast.makeText(getContext(), R.string.error_step_prev, Toast.LENGTH_LONG).show();
+            showToast(R.string.error_step_prev);
         }
     }
 
@@ -209,5 +210,13 @@ public class StepsFragment extends Fragment {
                 actionBar.setTitle(title);
             }
         }
+    }
+
+    private void showToast(int messageRes) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(getContext(), messageRes, Toast.LENGTH_LONG);
+        mToast.show();
     }
 }

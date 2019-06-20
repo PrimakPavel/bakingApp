@@ -97,7 +97,7 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
             mAdapter.updateList(mSteps, ingredients);
         }
 
-        //start first step if tablet
+        //start first step if tablet and first start
         if (savedInstanceState == null && getResources().getBoolean(R.bool.isTablet)) {
             startFirstStep();
         } else {
