@@ -10,12 +10,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/stepLogo"
-            android:layout_width="160dp"
+            android:layout_width="@dimen/logo_width"
             android:background="@color/colorAccentLight"
-            android:layout_height="90dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp" />
+            android:layout_height="@dimen/logo_height"
+            android:layout_marginStart="@dimen/main_margin"
+            android:layout_marginLeft="@dimen/main_margin"
+            android:layout_marginTop="@dimen/main_margin" />
 
         <TextView
             android:id="@+id/stepDescription"

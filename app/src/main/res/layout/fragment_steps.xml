@@ -66,7 +66,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/main_margin"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="@dimen/small_margin"
                     app:layout_constraintBottom_toTopOf="@+id/prevStepBtn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/main_margin"
                     android:layout_marginLeft="@dimen/main_margin"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="@dimen/extra_large_main_margin"
                     android:text="@string/btn_prev"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/main_margin"
                     android:layout_marginRight="@dimen/main_margin"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="@dimen/extra_large_main_margin"
                     android:text="@string/btn_next"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

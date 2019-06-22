@@ -9,11 +9,19 @@
         android:id="@+id/recipeCardFragment"
         android:name="com.pavelprymak.bakingapp.presentation.screens.RecipeCardFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_recipe_card" />
+        tools:layout="@layout/fragment_recipe_card" >
+        <action
+            android:id="@+id/action_recipeCardFragment_to_recipeInfoFragment"
+            app:destination="@id/recipeInfoFragment" />
+    </fragment>
     <fragment
         android:id="@+id/recipeInfoFragment"
         android:name="com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment"
-        tools:layout="@layout/fragment_recipe_info" />
+        tools:layout="@layout/fragment_recipe_info" >
+        <action
+            android:id="@+id/action_recipeInfoFragment_to_stepsFragment"
+            app:destination="@id/stepsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/stepsFragment"
         android:name="com.pavelprymak.bakingapp.presentation.screens.StepsFragment"

@@ -8,9 +8,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.data.Constants;
-import com.pavelprymak.bakingapp.utils.RecipeItemToRecipeEntityConverter;
 import com.pavelprymak.bakingapp.data.db.RecipeEntity;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
+import com.pavelprymak.bakingapp.utils.RecipeItemToRecipeEntityConverter;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

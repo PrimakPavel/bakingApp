@@ -2,8 +2,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="extra_large_main_margin">32dp</dimen>
     <dimen name="main_margin">16dp</dimen>
     <dimen name="small_margin">8dp</dimen>
+    <dimen name="extra_small_margin">4dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
 
@@ -15,13 +17,14 @@
     <dimen name="small_text_size">12sp</dimen>
 
 
-    <dimen name="recipe_item_height">120dp</dimen>
-    <dimen name="step_item_height">60dp</dimen>
+    <dimen name="logo_height">90dp</dimen>
+    <dimen name="logo_width">160dp</dimen>
 
-    <!--
-Refer to App Widget Documentation for margin information
-http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
-    -->
+    <dimen name="exo_player_btn_width">100dp</dimen>
+    <dimen name="exo_player_btn_height">100dp</dimen>
+    <dimen name="exo_player_bar_height">26dp</dimen>
+
+
     <dimen name="widget_margin">8dp</dimen>
 
 </resources>
