@@ -14,6 +14,7 @@ import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import com.pavelprymak.bakingapp.databinding.ItemViewRecipeIngredientsBinding;
 import com.pavelprymak.bakingapp.databinding.ItemViewRecipeStepBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -114,6 +115,16 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     binding.stepDescription.setText(stepsItem.getShortDescription());
                 } else {
                     binding.stepDescription.setText(EMPTY);
+                }
+                //LOGO
+                if (stepsItem.getThumbnailURL() != null && !stepsItem.getThumbnailURL().isEmpty()) {
+                    Picasso.get()
+                            .load(stepsItem.getThumbnailURL())
+                            .error(R.drawable.ic_menu_slideshow)
+                            .into(binding.stepLogo);
+
+                } else {
+                    binding.stepLogo.setImageResource(R.drawable.ic_menu_slideshow);
                 }
             }
         }

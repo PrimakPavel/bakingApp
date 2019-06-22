@@ -93,10 +93,13 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
 
     private void prepareFavoriteIcon(boolean isFavorite) {
         if (mMenu != null) {
-            if (isFavorite) {
-                mMenu.findItem(R.id.favorite_action).setIcon(R.drawable.ic_favorite_remove);
-            } else {
-                mMenu.findItem(R.id.favorite_action).setIcon(R.drawable.ic_favorite_add);
+            MenuItem menuItem = mMenu.findItem(R.id.favorite_action);
+            if (menuItem != null) {
+                if (isFavorite) {
+                    menuItem.setIcon(R.drawable.ic_favorite_remove);
+                } else {
+                    menuItem.setIcon(R.drawable.ic_favorite_add);
+                }
             }
         }
     }
@@ -104,9 +107,8 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         mMenu = menu;
-        if (mRecipeItem != null) {
-            prepareFavoriteIcon(mIsFavorite);
-        }
+        prepareFavoriteIcon(mIsFavorite);
+
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -133,6 +135,19 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
             setAppBarTitle(mRecipeTitle);
         }
         if (mRecipeId != INVALID_RECIPE_ID) {
+            mInfoViewModel.getFavoritesIdList().observe(this, integers -> {
+                // update AppWidget
+                if (getActivity() != null) {
+                    RecipeUpdateWidgetService.startActionUpdateRecipesWidgets(getActivity().getApplicationContext());
+                }
+
+                if (integers != null) {
+                    mIsFavorite = integers.contains(mRecipeId);
+                    prepareFavoriteIcon(mIsFavorite);
+                } else {
+                    mIsFavorite = false;
+                }
+            });
             mInfoViewModel.getRecipeItemById(mRecipeId).observe(this, recipeItem -> {
                 if (recipeItem != null) {
                     mRecipeItem = recipeItem;
@@ -148,19 +163,7 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
                     }
                 }
             });
-            mInfoViewModel.getFavoritesIdList().observe(this, integers -> {
-                // update AppWidget
-                if (getActivity() != null) {
-                    RecipeUpdateWidgetService.startActionUpdateRecipesWidgets(getActivity().getApplicationContext());
-                }
 
-                if (integers != null) {
-                    mIsFavorite = integers.contains(mRecipeId);
-                    prepareFavoriteIcon(mIsFavorite);
-                } else {
-                    mIsFavorite = false;
-                }
-            });
         }
     }
 

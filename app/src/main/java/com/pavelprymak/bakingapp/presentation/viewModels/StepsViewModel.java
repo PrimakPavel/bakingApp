@@ -7,7 +7,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.pavelprymak.bakingapp.App;
-import com.pavelprymak.bakingapp.data.RecipeItemToRecipeEntityConverter;
+import com.pavelprymak.bakingapp.utils.RecipeItemToRecipeEntityConverter;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 

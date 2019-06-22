@@ -1,4 +1,4 @@
-package com.pavelprymak.bakingapp.data;
+package com.pavelprymak.bakingapp.utils;
 
 import androidx.annotation.NonNull;
 

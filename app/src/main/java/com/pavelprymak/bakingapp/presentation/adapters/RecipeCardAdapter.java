@@ -13,6 +13,7 @@ import com.pavelprymak.bakingapp.R;
 import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.databinding.ItemViewRecipeCardBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -64,6 +65,15 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
         void bind(int position) {
             RecipeItem recipeItem = mRecipes.get(position);
             if (recipeItem != null && mContext != null) {
+                //LOGO
+                if (recipeItem.getImage() != null && !recipeItem.getImage().isEmpty()) {
+                    Picasso.get()
+                            .load(recipeItem.getImage())
+                            .into(binding.recipeLogo);
+
+                } else {
+                    binding.recipeLogo.setImageResource(R.drawable.ic_recipe);
+                }
                 //Content
                 if (recipeItem.getName() != null) {
                     binding.recipeTitle.setText(recipeItem.getName());

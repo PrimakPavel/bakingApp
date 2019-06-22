@@ -8,8 +8,8 @@ import android.widget.RemoteViewsService;
 
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.R;
-import com.pavelprymak.bakingapp.data.RecipeItemToRecipeEntityConverter;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
+import com.pavelprymak.bakingapp.utils.RecipeItemToRecipeEntityConverter;
 
 import java.util.List;
 
@@ -77,7 +77,8 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         fillInIntent.putExtras(extras);
         views.setOnClickFillInIntent(R.id.app_w_recipe_title, fillInIntent);
         if (mContext != null && recipe.getIngredients() != null && recipe.getIngredients().size() > 0) {
-        views.setTextViewText(R.id.app_w_recipe_ingredients, createIngredientsStr(mContext, recipe.getIngredients()));}
+            views.setTextViewText(R.id.app_w_recipe_ingredients, createIngredientsStr(mContext, recipe.getIngredients()));
+        }
         views.setTextViewText(R.id.app_w_recipe_title, recipe.getName());
         return views;
 
