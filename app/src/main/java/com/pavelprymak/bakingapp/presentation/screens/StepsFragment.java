@@ -93,10 +93,7 @@ public class StepsFragment extends Fragment {
         mStepsViewModel = ViewModelProviders.of(this).get(StepsViewModel.class);
         if (savedInstanceState == null) {
             if (mRecipeId != INVALID_RECIPE_ID) {
-                mStepsViewModel.prepareStepsByRecipeId(mRecipeId);
-            }
-            if (mStepId != INVALID_STEP_ID) {
-                mStepsViewModel.setCurrentStepId(mStepId);
+                mStepsViewModel.prepareRecipeItemById(mRecipeId, mStepId);
             }
         }
         return mBinding.getRoot();
@@ -138,12 +135,14 @@ public class StepsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //Load current step
-        StepsItem currentStepItem = mStepsViewModel.getCurrentStep();
-        if (currentStepItem != null) {
-            showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
-        } else {
-            showToast(R.string.error_step_load);
-        }
+        mStepsViewModel.removeObserversCurrentStepData(this);
+        mStepsViewModel.getCurrentStepData().observe(this, currentStepItem -> {
+            if (currentStepItem != null) {
+                showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
+            } else {
+                showToast(R.string.error_step_load);
+            }
+        });
     }
 
     @Override
@@ -168,6 +167,7 @@ public class StepsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         App.eventBus.unregister(this);
+        mStepsViewModel.removeObserversAll(this);
         ActivityHelper.setWakeLock(getActivity(), false);
         ActivityHelper.setAppBarVisibility(getActivity(), true);
         ActivityHelper.setFullScreen(getActivity(), false);
@@ -176,31 +176,37 @@ public class StepsFragment extends Fragment {
     @Subscribe
     public void onStepItemClick(EventOnStepItemClick event) {
         if (event.getRecipeId() != mRecipeId || event.getStepId() != mStepId) {
-            mStepsViewModel.prepareStepsByRecipeId(event.getRecipeId());
-            mStepsViewModel.setCurrentStepId(event.getStepId());
-            StepsItem currentStep = mStepsViewModel.getCurrentStep();
-            if (currentStep != null) {
-                showStepInfo(currentStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
-            }
+            mStepsViewModel.prepareRecipeItemById(event.getRecipeId(), event.getStepId());
+            mStepsViewModel.removeObserversCurrentStepData(this);
+            mStepsViewModel.getCurrentStepDataById(event.getStepId()).observe(this, currentStep -> {
+                if (currentStep != null) {
+                    showStepInfo(currentStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
+                }
+            });
         }
     }
 
     private void showNextStep() {
-        StepsItem nextStep = mStepsViewModel.getNextStep();
-        if (nextStep != null) {
-            showStepInfo(nextStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
-        } else {
-            showToast(R.string.error_step_next);
-        }
+        mStepsViewModel.removeObserversNextStepData(this);
+        mStepsViewModel.getNextStepItem().observe(this, nextStep -> {
+            if (nextStep != null) {
+                showStepInfo(nextStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
+            } else {
+                showToast(R.string.error_step_next);
+            }
+        });
     }
 
     private void showPrevStep() {
-        StepsItem prevStep = mStepsViewModel.getPrevStep();
-        if (prevStep != null) {
-            showStepInfo(prevStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
-        } else {
-            showToast(R.string.error_step_prev);
-        }
+        mStepsViewModel.removeObserversPrevStepData(this);
+        mStepsViewModel.getPrevStepItem().observe(this, prevStep -> {
+            if (prevStep != null) {
+                showStepInfo(prevStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
+            } else {
+                showToast(R.string.error_step_prev);
+            }
+        });
+
     }
 
     private void setAppBarTitle(String title) {

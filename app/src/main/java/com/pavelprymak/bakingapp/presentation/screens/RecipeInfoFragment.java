@@ -2,7 +2,6 @@ package com.pavelprymak.bakingapp.presentation.screens;
 
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.MainActivity;
 import com.pavelprymak.bakingapp.R;
-import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import com.pavelprymak.bakingapp.databinding.FragmentRecipeInfoBinding;
 import com.pavelprymak.bakingapp.presentation.adapters.RecipeInfoAdapter;
@@ -40,14 +38,12 @@ import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_ST
 
 public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickListener {
     private static final String SAVE_INSTANCE_SELECTED_STEP_ID = "saveInstanceSelectedStepId";
-    private static final int SCROLL_TO_ELEMENT_DELAY_MS = 500;
     public static final String ARG_RECIPE_ID = "argRecipeId";
     public static final String ARG_RECIPE_TITLE = "argRecipeTitle";
     private FragmentRecipeInfoBinding mBinding;
     private RecipeInfoViewModel mInfoViewModel;
     private RecipeInfoAdapter mAdapter;
     private NavController mNavController;
-    private List<StepsItem> mSteps;
 
     private int mRecipeId = INVALID_RECIPE_ID;
     private String mRecipeTitle;
@@ -73,9 +69,7 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
             ((MainActivity) getActivity()).setHomeBtnEnable(true);
         }
         mInfoViewModel = ViewModelProviders.of(this).get(RecipeInfoViewModel.class);
-        if (mRecipeId != INVALID_RECIPE_ID) {
-            mInfoViewModel.prepareIngredientsAndSteps(mRecipeId);
-        }
+
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_info, container, false);
         // Inflate the layout for this fragment
         return mBinding.getRoot();
@@ -90,24 +84,28 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
         if (mRecipeTitle != null) {
             setAppBarTitle(mRecipeTitle);
         }
-        List<IngredientsItem> ingredients = mInfoViewModel.getIngredients();
-        mSteps = mInfoViewModel.getSteps();
-
-        if (ingredients != null && mSteps != null) {
-            mAdapter.updateList(mSteps, ingredients);
+        if (mRecipeId != INVALID_RECIPE_ID) {
+            mInfoViewModel.getRecipeItemById(mRecipeId).observe(this, recipeItem -> {
+                if (recipeItem != null) {
+                    if (recipeItem.getIngredients() != null && recipeItem.getSteps() != null) {
+                        mAdapter.updateList(recipeItem.getSteps(), recipeItem.getIngredients());
+                    }
+                    //start first step if tablet and first start
+                    if (savedInstanceState == null && getResources().getBoolean(R.bool.isTablet)) {
+                        startFirstStep(recipeItem.getSteps());
+                    } else {
+                        recyclerScrollToSelectedPosition();
+                    }
+                }
+            });
         }
 
-        //start first step if tablet and first start
-        if (savedInstanceState == null && getResources().getBoolean(R.bool.isTablet)) {
-            startFirstStep();
-        } else {
-            new Handler().postDelayed(this::recyclerScrollToSelectedPosition, SCROLL_TO_ELEMENT_DELAY_MS);
-        }
+
     }
 
-    private void startFirstStep() {
-        if (mSteps != null && mSteps.size() > 0 && mSelectedStepId == INVALID_STEP_ID) {
-            mSelectedStepId = mSteps.get(0).getId();
+    private void startFirstStep(List<StepsItem> steps) {
+        if (steps != null && steps.size() > 0 && mSelectedStepId == INVALID_STEP_ID) {
+            mSelectedStepId = steps.get(0).getId();
             mAdapter.setSelectedStepId(mSelectedStepId);
         }
         App.eventBus.post(new EventOnStepItemClick(mRecipeId, mSelectedStepId));

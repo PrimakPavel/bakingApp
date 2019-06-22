@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -59,10 +60,18 @@ public class RecipeCardFragment extends Fragment implements RecipeCardItemClickL
         mNavController = Navigation.findNavController(view);
         super.onViewCreated(view, savedInstanceState);
         initRecipeCardRecyclerView();
-        List<RecipeItem> recipes = mRecipeCardViewModel.getRecipes();
-        if (recipes != null) {
-            mAdapter.updateList(recipes);
-        }
+        mRecipeCardViewModel.getRecipes().observe(this, recipes -> {
+            if (recipes != null) {
+                mAdapter.updateList(recipes);
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mRecipeCardViewModel.getRecipes().removeObservers(this);
     }
 
     private void initRecipeCardRecyclerView() {

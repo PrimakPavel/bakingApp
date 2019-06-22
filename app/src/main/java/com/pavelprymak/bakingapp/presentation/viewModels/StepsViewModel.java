@@ -1,92 +1,144 @@
 package com.pavelprymak.bakingapp.presentation.viewModels;
 
 
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.pavelprymak.bakingapp.data.RepoImpl;
+import com.pavelprymak.bakingapp.App;
+import com.pavelprymak.bakingapp.data.RecipeItemToRecipeEntityConverter;
+import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
 import java.util.List;
 
-import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_ID;
 
 public class StepsViewModel extends ViewModel {
     private static final int FIRST_POSITION = 0;
-
-
-    private RepoImpl mRepo = new RepoImpl();
-    private int mRecipeId = INVALID_RECIPE_ID;
+    private LiveData<RecipeItem> recipeItemData = new MutableLiveData<>();
     private int mStepId = INVALID_STEP_ID;
-    private List<StepsItem> mSteps = null;
+    private LiveData<StepsItem> currentStepData;
+    private LiveData<StepsItem> nextStepData;
+    private LiveData<StepsItem> prevStepData;
 
-
-    public void prepareStepsByRecipeId(int recipeId) {
-        if (mSteps == null || mRecipeId != recipeId) {
-            mRecipeId = recipeId;
-            mSteps = mRepo.getStepsById(mRecipeId);
-            setFirstStepAsCurrent();
+    public void prepareRecipeItemById(int recipeId, int currentStepId) {
+        if (recipeItemData.getValue() == null || recipeItemData.getValue().getId() != recipeId) {
+            recipeItemData = Transformations.map(App.dbRepo.loadRecipeById(recipeId), input -> {
+                if (input != null) {
+                    if (currentStepId == INVALID_STEP_ID) {
+                        setFirstStepAsCurrent(input.getSteps());
+                    } else {
+                        mStepId = currentStepId;
+                    }
+                    return RecipeItemToRecipeEntityConverter.convertToRecipeItem(input);
+                }
+                return null;
+            });
         }
     }
 
-    private void setFirstStepAsCurrent() {
-        if (mSteps != null && mSteps.size() > 0) {
-            StepsItem firstStep = mSteps.get(FIRST_POSITION);
+    private void setFirstStepAsCurrent(List<StepsItem> steps) {
+        if (steps != null && steps.size() > 0 && mStepId == INVALID_STEP_ID) {
+            StepsItem firstStep = steps.get(FIRST_POSITION);
             if (firstStep != null) {
                 mStepId = firstStep.getId();
             }
         }
     }
 
-    public void setCurrentStepId(int stepId) {
+
+    public LiveData<StepsItem> getCurrentStepData() {
+        currentStepData = Transformations.map(recipeItemData, input -> {
+            if (input != null && input.getSteps() != null && mStepId != INVALID_STEP_ID) {
+                for (StepsItem step : input.getSteps()) {
+                    if (step.getId() == mStepId) {
+                        return step;
+                    }
+                }
+            }
+            return null;
+        });
+        return currentStepData;
+    }
+
+    public LiveData<StepsItem> getCurrentStepDataById(int stepId) {
         mStepId = stepId;
+        return getCurrentStepData();
     }
 
-
-    public StepsItem getCurrentStep() {
-        if (mSteps != null && mStepId != INVALID_STEP_ID) {
-            for (StepsItem step : mSteps) {
-                if (step.getId() == mStepId) {
-                    return step;
-                }
-            }
-        }
-        return null;
-    }
-
-    public StepsItem getNextStep() {
-        if (mSteps != null && mStepId != INVALID_STEP_ID) {
-            for (int i = 0; i < mSteps.size(); i++) {
-                final int nextIndex = i + 1;
-                if (mSteps.get(i) != null
-                        && mSteps.get(i).getId() == mStepId
-                        && (nextIndex) < mSteps.size()) {
-                    StepsItem nextStep = mSteps.get(nextIndex);
-                    if (nextStep != null) {
-                        mStepId = nextStep.getId();
+    public LiveData<StepsItem> getNextStepItem() {
+        nextStepData = Transformations.map(recipeItemData, input -> {
+            if (input != null) {
+                List<StepsItem> steps = input.getSteps();
+                if (steps != null && mStepId != INVALID_STEP_ID) {
+                    for (int i = 0; i < steps.size(); i++) {
+                        final int nextIndex = i + 1;
+                        if (steps.get(i) != null
+                                && steps.get(i).getId() == mStepId
+                                && (nextIndex) < steps.size()) {
+                            StepsItem nextStep = steps.get(nextIndex);
+                            if (nextStep != null) {
+                                mStepId = nextStep.getId();
+                            }
+                            return nextStep;
+                        }
                     }
-                    return nextStep;
                 }
             }
-        }
-        return null;
+            return null;
+        });
+        return nextStepData;
     }
 
-    public StepsItem getPrevStep() {
-        if (mSteps != null && mStepId != INVALID_STEP_ID) {
-            for (int i = 0; i < mSteps.size(); i++) {
-                final int prevIndex = i - 1;
-                if (mSteps.get(i) != null
-                        && mSteps.get(i).getId() == mStepId
-                        && (prevIndex) >= 0) {
-                    StepsItem prevStep = mSteps.get(prevIndex);
-                    if (prevStep != null) {
-                        mStepId = prevStep.getId();
+    public LiveData<StepsItem> getPrevStepItem() {
+        prevStepData = Transformations.map(recipeItemData, input -> {
+            if (input != null) {
+                List<StepsItem> steps = input.getSteps();
+                if (steps != null && mStepId != INVALID_STEP_ID) {
+                    for (int i = 0; i < steps.size(); i++) {
+                        final int prevIndex = i - 1;
+                        if (steps.get(i) != null
+                                && steps.get(i).getId() == mStepId
+                                && (prevIndex) >= 0) {
+                            StepsItem prevStep = steps.get(prevIndex);
+                            if (prevStep != null) {
+                                mStepId = prevStep.getId();
+                            }
+                            return prevStep;
+                        }
                     }
-                    return prevStep;
                 }
             }
+            return null;
+        });
+        return prevStepData;
+    }
+
+    public void removeObserversAll(LifecycleOwner lifecycleOwner) {
+        recipeItemData.removeObservers(lifecycleOwner);
+        removeObserversCurrentStepData(lifecycleOwner);
+        removeObserversNextStepData(lifecycleOwner);
+        removeObserversPrevStepData(lifecycleOwner);
+    }
+
+    public void removeObserversNextStepData(LifecycleOwner lifecycleOwner) {
+        if (nextStepData != null) {
+            nextStepData.removeObservers(lifecycleOwner);
         }
-        return null;
+    }
+
+    public void removeObserversPrevStepData(LifecycleOwner lifecycleOwner) {
+        if (prevStepData != null) {
+            prevStepData.removeObservers(lifecycleOwner);
+        }
+    }
+
+    public void removeObserversCurrentStepData(LifecycleOwner lifecycleOwner) {
+        if (currentStepData != null) {
+            currentStepData.removeObservers(lifecycleOwner);
+        }
     }
 }

@@ -1,40 +1,22 @@
 package com.pavelprymak.bakingapp.presentation.viewModels;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.pavelprymak.bakingapp.data.pojo.IngredientsItem;
-import com.pavelprymak.bakingapp.data.RepoImpl;
+import com.pavelprymak.bakingapp.App;
+import com.pavelprymak.bakingapp.data.RecipeItemToRecipeEntityConverter;
+import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
 import java.util.List;
 
-import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_POSITION;
 
 public class RecipeInfoViewModel extends ViewModel {
-
-    private RepoImpl mRepo = new RepoImpl();
-    private List<IngredientsItem> mIngredients;
+    private LiveData<RecipeItem> recipeItemData = new MutableLiveData<>();
     private List<StepsItem> mSteps;
-    private int mRecipeId = INVALID_RECIPE_ID;
-
-    public void prepareIngredientsAndSteps(int recipeId) {
-        if (mSteps == null || recipeId != mRecipeId) {
-            mSteps = mRepo.getStepsById(recipeId);
-        }
-        if (mIngredients == null || recipeId != mRecipeId) {
-            mIngredients = mRepo.getIngredientsById(recipeId);
-        }
-        mRecipeId = recipeId;
-    }
-
-    public List<IngredientsItem> getIngredients() {
-        return mIngredients;
-    }
-
-    public List<StepsItem> getSteps() {
-        return mSteps;
-    }
 
     public int getPositionByStepId(int stepId) {
         if (mSteps != null) {
@@ -46,5 +28,18 @@ public class RecipeInfoViewModel extends ViewModel {
             }
         }
         return INVALID_STEP_POSITION;
+    }
+
+    public LiveData<RecipeItem> getRecipeItemById(int recipeId) {
+        if (recipeItemData.getValue() == null || recipeItemData.getValue().getId() != recipeId) {
+            recipeItemData = Transformations.map(App.dbRepo.loadRecipeById(recipeId), input -> {
+                if (input != null) {
+                    mSteps = input.getSteps();
+                    return RecipeItemToRecipeEntityConverter.convertToRecipeItem(input);
+                }
+                return null;
+            });
+        }
+        return recipeItemData;
     }
 }

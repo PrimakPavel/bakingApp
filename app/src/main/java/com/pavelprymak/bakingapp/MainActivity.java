@@ -2,17 +2,20 @@ package com.pavelprymak.bakingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.pavelprymak.bakingapp.presentation.viewModels.MainViewModel;
 
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
@@ -44,9 +47,15 @@ public class MainActivity extends AppCompatActivity {
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navigationView, mNavController);
         NavigationUI.setupActionBarWithNavController(this, mNavController, mDrawer);
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             implementInputIntent(getIntent());
         }
+
+        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel.initDbFromNetworkFile();
+        mainViewModel.getRecipes().observe(this, recipeEntities -> {
+            //TODO
+        });
     }
 
 
