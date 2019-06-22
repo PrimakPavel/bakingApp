@@ -26,7 +26,6 @@ public class RecipeItem {
 	@SerializedName("steps")
 	private List<StepsItem> steps;
 
-	private boolean isFavorite;
 
 	public void setImage(String image){
 		this.image = image;
@@ -76,13 +75,8 @@ public class RecipeItem {
 		return steps;
 	}
 
-	public boolean isFavorite() {
-		return isFavorite;
-	}
 
-	public void setFavorite(boolean favorite) {
-		isFavorite = favorite;
-	}
+
 
 	@NotNull
 	@Override
@@ -94,7 +88,6 @@ public class RecipeItem {
 				", ingredients=" + ingredients +
 				", id=" + id +
 				", steps=" + steps +
-				", isFavorite=" + isFavorite +
 				'}';
 	}
 }

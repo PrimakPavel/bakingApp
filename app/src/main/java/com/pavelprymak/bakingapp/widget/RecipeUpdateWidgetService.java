@@ -15,14 +15,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.R;
+import com.pavelprymak.bakingapp.data.RecipeItemToRecipeEntityConverter;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 
 import java.util.List;
 
 import static com.pavelprymak.bakingapp.App.CHANNEL_ID;
 import static com.pavelprymak.bakingapp.App.CHANNEL_NAME;
-import static com.pavelprymak.bakingapp.App.loadRecipesDataFromFile;
 
 public class RecipeUpdateWidgetService extends IntentService {
     public static final String TAG = RecipeUpdateWidgetService.class.getSimpleName();
@@ -85,17 +86,17 @@ public class RecipeUpdateWidgetService extends IntentService {
     }
 
     private void handleActionUpdateWidgets() {
-        List<RecipeItem> recipeItems = loadRecipesDataFromFile(this);
+        List<Integer> favoriteIds = App.dbRepo.loadAllFavoritesRecipeIds();
+        List<RecipeItem> recipeItems = RecipeItemToRecipeEntityConverter.convertToRecipeItemList(App.dbRepo.loadRecipesByIds(favoriteIds));
+        RecipeItem recipeFirstItem = null;
         if (recipeItems != null && recipeItems.size() > 0) {
-            RecipeItem recipeFirstItem = recipeItems.get(0);
-            if (recipeFirstItem != null) {
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-                int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeAppProvider.class));
-                //Trigger data update to handle the GridView widgets and force a data refresh
-                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
-                RecipeAppProvider.updateAppWidget(this, appWidgetManager, appWidgetIds, recipeFirstItem);
-            }
+            recipeFirstItem = recipeItems.get(0);
         }
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeAppProvider.class));
+        //Trigger data update to handle the GridView widgets and force a data refresh
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
+        RecipeAppProvider.updateAppWidget(this, appWidgetManager, appWidgetIds, recipeFirstItem);
     }
 }
 

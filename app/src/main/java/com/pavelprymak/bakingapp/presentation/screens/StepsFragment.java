@@ -15,6 +15,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.pavelprymak.bakingapp.App;
@@ -45,6 +46,7 @@ public class StepsFragment extends Fragment {
     private int mRecipeId = INVALID_RECIPE_ID;
     private int mStepId = INVALID_STEP_ID;
     private String mRecipeTitle;
+    private Bundle mSaveInstanceSate;
 
 
     private FragmentStepsBinding mBinding;
@@ -55,6 +57,7 @@ public class StepsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSaveInstanceSate = savedInstanceState;
         if (getArguments() != null) {
             mRecipeId = getArguments().getInt(ARG_RECIPE_ID, INVALID_RECIPE_ID);
             mRecipeTitle = getArguments().getString(ARG_RECIPE_TITLE);
@@ -93,7 +96,7 @@ public class StepsFragment extends Fragment {
         mStepsViewModel = ViewModelProviders.of(this).get(StepsViewModel.class);
         if (savedInstanceState == null) {
             if (mRecipeId != INVALID_RECIPE_ID) {
-                mStepsViewModel.prepareRecipeItemById(mRecipeId, mStepId);
+                mStepsViewModel.prepareRecipeItemById(mRecipeId);
             }
         }
         return mBinding.getRoot();
@@ -135,8 +138,12 @@ public class StepsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //Load current step
-        mStepsViewModel.removeObserversCurrentStepData(this);
-        mStepsViewModel.getCurrentStepData().observe(this, currentStepItem -> {
+        LiveData<StepsItem> currentStepData = mStepsViewModel.getCurrentStepData();
+        if (mSaveInstanceSate == null) {
+            currentStepData = mStepsViewModel.getCurrentStepDataById(mStepId);
+        }
+        currentStepData.observe(this, currentStepItem -> {
+            mStepsViewModel.removeObserversCurrentStepData(this);
             if (currentStepItem != null) {
                 showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
             } else {
@@ -176,9 +183,9 @@ public class StepsFragment extends Fragment {
     @Subscribe
     public void onStepItemClick(EventOnStepItemClick event) {
         if (event.getRecipeId() != mRecipeId || event.getStepId() != mStepId) {
-            mStepsViewModel.prepareRecipeItemById(event.getRecipeId(), event.getStepId());
-            mStepsViewModel.removeObserversCurrentStepData(this);
+            mStepsViewModel.prepareRecipeItemById(event.getRecipeId());
             mStepsViewModel.getCurrentStepDataById(event.getStepId()).observe(this, currentStep -> {
+                mStepsViewModel.removeObserversCurrentStepData(this);
                 if (currentStep != null) {
                     showStepInfo(currentStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
                 }
@@ -187,8 +194,8 @@ public class StepsFragment extends Fragment {
     }
 
     private void showNextStep() {
-        mStepsViewModel.removeObserversNextStepData(this);
         mStepsViewModel.getNextStepItem().observe(this, nextStep -> {
+            mStepsViewModel.removeObserversNextStepData(this);
             if (nextStep != null) {
                 showStepInfo(nextStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
             } else {
@@ -198,8 +205,8 @@ public class StepsFragment extends Fragment {
     }
 
     private void showPrevStep() {
-        mStepsViewModel.removeObserversPrevStepData(this);
         mStepsViewModel.getPrevStepItem().observe(this, prevStep -> {
+            mStepsViewModel.removeObserversPrevStepData(this);
             if (prevStep != null) {
                 showStepInfo(prevStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
             } else {

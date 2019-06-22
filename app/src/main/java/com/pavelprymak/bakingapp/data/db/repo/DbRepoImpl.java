@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.pavelprymak.bakingapp.data.db.AppDatabase;
+import com.pavelprymak.bakingapp.data.db.FavoriteRecipeEntity;
 import com.pavelprymak.bakingapp.data.db.RecipeEntity;
 
 import java.util.List;
@@ -46,13 +47,34 @@ public class DbRepoImpl implements DbRepo {
     }
 
     @Override
+    public List<RecipeEntity> loadRecipesByIds(List<Integer> recipeList) {
+        return mDb.recipesDao().loadRecipesByIds(recipeList);
+    }
+
+    @Override
     public Integer loadRecipesCount() {
         return mDb.recipesDao().getRowCount();
     }
 
     @Override
-    public LiveData<List<RecipeEntity>> loadAllFavoritesRecipes() {
-        return mDb.recipesDao().loadAllFavoritesRecipe();
+    public void deleteFavoriteRecipe(int recipeId) {
+        diskIO.execute(() -> mDb.favoritesDao().deleteFavoriteByRecipeId(recipeId));
+    }
+
+    @Override
+    public void insertFavoriteRecipe(int recipeId) {
+        diskIO.execute(() -> mDb.favoritesDao().insertFavorite(new FavoriteRecipeEntity(recipeId)));
+    }
+
+    @Override
+    public LiveData<List<FavoriteRecipeEntity>> loadAllFavoritesRecipes() {
+        return mDb.favoritesDao().loadAllFavorites();
+
+    }
+
+    @Override
+    public List<Integer> loadAllFavoritesRecipeIds() {
+        return mDb.favoritesDao().loadAllFavoritesIds();
     }
 
     @Override

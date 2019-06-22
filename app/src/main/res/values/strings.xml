@@ -20,7 +20,8 @@
     <string name="ingredients_label">Ingredients:</string>
     <string name="appwidget_title">Recipe Name</string>
     <string name="appwidget_ingredients">Ingredients:</string>
-    <string name="empty_fields">Empty!</string>
+    <string name="empty_fields">Empty favorites list!</string>
     <string name="add_widget">Add widget</string>
+    <string name="action_favorite">Favorite</string>
 
 </resources>

@@ -56,16 +56,28 @@ public class RecipeInfoFragmentTest {
     }
 
     @Test
-    public void onRecipeInfoRecyclerItemClick() {
+    public void onRecipeInfoFirstRecyclerItemClick() {
         onFirstStepItemClick();
         onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar))))
                 .check(matches(withText(RECIPE_CARD_FIRST_ITEM_TITLE)));
         onView(withId(R.id.playerView)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void onRecipeInfoLastRecyclerItemClick() {
+        onLastStepItemClick();
+        onView(withId(R.id.playerView)).check(matches(isDisplayed()));
+        onView(withId(R.id.descriptionShortTv)).check(matches(withText(RECIPE_CARD_FIRST_ITEM_STEP_LAST_TITLE)));
+    }
+
     private void onFirstStepItemClick() {
         onView(withId(R.id.recipeInfoRecycler))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(RECIPE_CARD_FIRST_ITEM_STEP_FIRST_POSITION, click()));
+    }
+
+    private void onLastStepItemClick() {
+        onView(withId(R.id.recipeInfoRecycler))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(RECIPE_CARD_FIRST_ITEM_STEP_LAST_POSITION, click()));
     }
 
 }

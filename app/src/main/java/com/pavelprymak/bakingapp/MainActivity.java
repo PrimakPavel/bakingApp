@@ -2,7 +2,6 @@ package com.pavelprymak.bakingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.pavelprymak.bakingapp.presentation.viewModels.MainViewModel;
+import com.pavelprymak.bakingapp.widget.RecipeUpdateWidgetService;
 
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;

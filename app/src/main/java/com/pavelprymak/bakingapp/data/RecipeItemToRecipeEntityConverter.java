@@ -18,7 +18,6 @@ public class RecipeItemToRecipeEntityConverter {
         recipeEntity.setIngredients(recipe.getIngredients());
         recipeEntity.setSteps(recipe.getSteps());
         recipeEntity.setServings(recipe.getServings());
-        recipeEntity.setFavorite(recipe.isFavorite());
         return recipeEntity;
     }
 
@@ -30,7 +29,6 @@ public class RecipeItemToRecipeEntityConverter {
         recipeItem.setIngredients(recipe.getIngredients());
         recipeItem.setSteps(recipe.getSteps());
         recipeItem.setServings(recipe.getServings());
-        recipeItem.setFavorite(recipe.isFavorite());
         return recipeItem;
     }
 

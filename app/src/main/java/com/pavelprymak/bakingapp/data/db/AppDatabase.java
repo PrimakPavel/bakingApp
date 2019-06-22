@@ -12,7 +12,7 @@ import com.pavelprymak.bakingapp.data.db.converters.StepsConverter;
 
 import timber.log.Timber;
 
-@Database(entities = {RecipeEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {RecipeEntity.class,FavoriteRecipeEntity.class}, version = 1, exportSchema = false)
 @TypeConverters(value = {IngredientsConverter.class, StepsConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
@@ -33,4 +33,5 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract RecipeDao recipesDao();
+    public abstract FavoriteRecipeDao favoritesDao();
 }

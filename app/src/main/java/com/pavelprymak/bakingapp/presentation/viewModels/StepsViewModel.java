@@ -1,6 +1,5 @@
 package com.pavelprymak.bakingapp.presentation.viewModels;
 
-
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -24,15 +23,10 @@ public class StepsViewModel extends ViewModel {
     private LiveData<StepsItem> nextStepData;
     private LiveData<StepsItem> prevStepData;
 
-    public void prepareRecipeItemById(int recipeId, int currentStepId) {
+    public void prepareRecipeItemById(int recipeId) {
         if (recipeItemData.getValue() == null || recipeItemData.getValue().getId() != recipeId) {
             recipeItemData = Transformations.map(App.dbRepo.loadRecipeById(recipeId), input -> {
                 if (input != null) {
-                    if (currentStepId == INVALID_STEP_ID) {
-                        setFirstStepAsCurrent(input.getSteps());
-                    } else {
-                        mStepId = currentStepId;
-                    }
                     return RecipeItemToRecipeEntityConverter.convertToRecipeItem(input);
                 }
                 return null;
@@ -40,19 +34,12 @@ public class StepsViewModel extends ViewModel {
         }
     }
 
-    private void setFirstStepAsCurrent(List<StepsItem> steps) {
-        if (steps != null && steps.size() > 0 && mStepId == INVALID_STEP_ID) {
-            StepsItem firstStep = steps.get(FIRST_POSITION);
-            if (firstStep != null) {
-                mStepId = firstStep.getId();
-            }
-        }
-    }
-
-
     public LiveData<StepsItem> getCurrentStepData() {
         currentStepData = Transformations.map(recipeItemData, input -> {
-            if (input != null && input.getSteps() != null && mStepId != INVALID_STEP_ID) {
+            if (input != null && input.getSteps() != null) {
+                if (mStepId == INVALID_STEP_ID) {
+                    setFirstStepAsCurrent(input.getSteps());
+                }
                 for (StepsItem step : input.getSteps()) {
                     if (step.getId() == mStepId) {
                         return step;
@@ -139,6 +126,15 @@ public class StepsViewModel extends ViewModel {
     public void removeObserversCurrentStepData(LifecycleOwner lifecycleOwner) {
         if (currentStepData != null) {
             currentStepData.removeObservers(lifecycleOwner);
+        }
+    }
+
+    private void setFirstStepAsCurrent(List<StepsItem> steps) {
+        if (steps != null && steps.size() > 0) {
+            StepsItem firstStep = steps.get(FIRST_POSITION);
+            if (firstStep != null) {
+                mStepId = firstStep.getId();
+            }
         }
     }
 }

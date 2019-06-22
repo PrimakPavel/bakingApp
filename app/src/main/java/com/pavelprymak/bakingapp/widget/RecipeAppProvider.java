@@ -24,17 +24,24 @@ import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.
  * Implementation of App Widget functionality.
  */
 public class RecipeAppProvider extends AppWidgetProvider {
+    public static final int MIN_WIDGET_WIDTH = 200;
+    public static final int MIN_WIDGET_HEIGHT = 200;
+
 
     static void updateAppWidget(@NonNull Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, @NonNull RecipeItem recipe) {
+                                int appWidgetId, RecipeItem recipe) {
         Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
         int height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
         int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
         RemoteViews rv;
-        if (height < 300 || width < 200) {
-            rv = getSingleRemoteViews(context, recipe);
+        if (recipe == null) {
+            rv = getEmptyRemoteViews(context);
         } else {
-            rv = getRecipeGridRemoteView(context);
+            if (height < MIN_WIDGET_HEIGHT || width < MIN_WIDGET_WIDTH) {
+                rv = getSingleRemoteViews(context, recipe);
+            } else {
+                rv = getRecipeGridRemoteView(context);
+            }
         }
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, rv);
@@ -55,13 +62,24 @@ public class RecipeAppProvider extends AppWidgetProvider {
         return views;
     }
 
+    @NotNull
+    private static RemoteViews getEmptyRemoteViews(@NonNull Context context) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_app_provider);
+        views.setTextViewText(R.id.app_w_recipe_title, context.getString(R.string.empty_fields));
+        views.setTextViewText(R.id.app_w_recipe_ingredients, "");
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.app_w_recipe_title, pendingIntent);
+        return views;
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         RecipeUpdateWidgetService.startActionUpdateRecipesWidgets(context);
     }
 
     static void updateAppWidget(@NonNull Context context, AppWidgetManager appWidgetManager,
-                                int[] appWidgetIds, @NonNull RecipeItem recipe) {
+                                int[] appWidgetIds, RecipeItem recipe) {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId, recipe);
         }

@@ -128,7 +128,6 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     clickListener.onRecipeStepItemClick(stepsItem.getId());
                 }
             }
-
         }
     }
 

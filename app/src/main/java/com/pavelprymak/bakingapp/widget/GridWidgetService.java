@@ -8,6 +8,7 @@ import android.widget.RemoteViewsService;
 
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.R;
+import com.pavelprymak.bakingapp.data.RecipeItemToRecipeEntityConverter;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 
 import java.util.List;
@@ -47,7 +48,8 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         // Get all plant info ordered by creation time
-        mRecipes = App.loadRecipesDataFromFile(mContext);
+        List<Integer> favoriteIds = App.dbRepo.loadAllFavoritesRecipeIds();
+        mRecipes = RecipeItemToRecipeEntityConverter.convertToRecipeItemList(App.dbRepo.loadRecipesByIds(favoriteIds));
     }
 
 
