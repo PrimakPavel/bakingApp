@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.MainActivity;
 import com.pavelprymak.bakingapp.R;
+import com.pavelprymak.bakingapp.ShowSnackBarListener;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import com.pavelprymak.bakingapp.databinding.FragmentStepsBinding;
 import com.pavelprymak.bakingapp.presentation.viewModels.StepsViewModel;
@@ -226,10 +227,13 @@ public class StepsFragment extends Fragment {
     }
 
     private void showToast(int messageRes) {
-        if (mToast != null) {
+       /* if (mToast != null) {
             mToast.cancel();
         }
         mToast = Toast.makeText(getContext(), messageRes, Toast.LENGTH_LONG);
-        mToast.show();
+        mToast.show();*/
+       if(getActivity() instanceof ShowSnackBarListener){
+           ((ShowSnackBarListener) getActivity()).showSnack(messageRes);
+       }
     }
 }

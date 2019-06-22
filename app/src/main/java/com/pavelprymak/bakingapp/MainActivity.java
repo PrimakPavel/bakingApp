@@ -3,6 +3,7 @@ package com.pavelprymak.bakingapp;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.pavelprymak.bakingapp.presentation.viewModels.MainViewModel;
 import com.pavelprymak.bakingapp.widget.RecipeUpdateWidgetService;
 
@@ -21,7 +23,7 @@ import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RE
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_TITLE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ShowSnackBarListener {
     public NavController mNavController;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mToggle;
@@ -90,5 +92,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
+    }
+
+    @Override
+    public void showSnack(int messageRes) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), messageRes, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 }

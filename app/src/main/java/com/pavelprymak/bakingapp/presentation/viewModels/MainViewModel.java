@@ -51,7 +51,7 @@ public class MainViewModel extends ViewModel {
             URL url = new URL(Constants.NETWORK_RES);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(CONNECTION_TIMEOUT_MS);
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
             String str;
             while ((str = in.readLine()) != null) {
                 resultStr.append(str);

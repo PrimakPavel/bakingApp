@@ -80,7 +80,9 @@
                     style="@style/AppTheme.BtnStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/main_margin"
+                    android:layout_marginStart="@dimen/main_margin"
+                    android:layout_marginLeft="@dimen/main_margin"
+                    android:layout_marginBottom="30dp"
                     android:text="@string/btn_prev"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -90,7 +92,9 @@
                     style="@style/AppTheme.BtnStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/main_margin"
+                    android:layout_marginEnd="@dimen/main_margin"
+                    android:layout_marginRight="@dimen/main_margin"
+                    android:layout_marginBottom="30dp"
                     android:text="@string/btn_next"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

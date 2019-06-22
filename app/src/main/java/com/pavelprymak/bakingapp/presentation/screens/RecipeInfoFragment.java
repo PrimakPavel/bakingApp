@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.MainActivity;
 import com.pavelprymak.bakingapp.R;
-import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 import com.pavelprymak.bakingapp.databinding.FragmentRecipeInfoBinding;
 import com.pavelprymak.bakingapp.presentation.adapters.RecipeInfoAdapter;
@@ -49,7 +48,6 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
     private RecipeInfoViewModel mInfoViewModel;
     private RecipeInfoAdapter mAdapter;
     private NavController mNavController;
-    private RecipeItem mRecipeItem;
     private boolean mIsFavorite;
     private Menu mMenu;
     private int mRecipeId = INVALID_RECIPE_ID;
@@ -150,8 +148,6 @@ public class RecipeInfoFragment extends Fragment implements RecipeStepItemClickL
             });
             mInfoViewModel.getRecipeItemById(mRecipeId).observe(this, recipeItem -> {
                 if (recipeItem != null) {
-                    mRecipeItem = recipeItem;
-
                     if (recipeItem.getIngredients() != null && recipeItem.getSteps() != null) {
                         mAdapter.updateList(recipeItem.getSteps(), recipeItem.getIngredients());
                     }
