@@ -13,18 +13,21 @@ import com.pavelprymak.bakingapp.data.pojo.StepsItem;
 
 import java.util.List;
 
+import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_STEP_ID;
 
 public class StepsViewModel extends ViewModel {
     private static final int FIRST_POSITION = 0;
     private LiveData<RecipeItem> recipeItemData = new MutableLiveData<>();
     private int mStepId = INVALID_STEP_ID;
+    private int mRecipeId = INVALID_RECIPE_ID;
     private LiveData<StepsItem> currentStepData;
     private LiveData<StepsItem> nextStepData;
     private LiveData<StepsItem> prevStepData;
 
     public void prepareRecipeItemById(int recipeId) {
-        if (recipeItemData.getValue() == null || recipeItemData.getValue().getId() != recipeId) {
+        if (recipeItemData.getValue() == null || mRecipeId != recipeId) {
+            mRecipeId = recipeId;
             recipeItemData = Transformations.map(App.dbRepo.loadRecipeById(recipeId), input -> {
                 if (input != null) {
                     return RecipeItemToRecipeEntityConverter.convertToRecipeItem(input);
@@ -136,5 +139,13 @@ public class StepsViewModel extends ViewModel {
                 mStepId = firstStep.getId();
             }
         }
+    }
+
+    public int getStepId() {
+        return mStepId;
+    }
+
+    public int getRecipeId() {
+        return mRecipeId;
     }
 }

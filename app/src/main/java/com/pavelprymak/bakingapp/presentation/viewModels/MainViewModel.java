@@ -58,7 +58,7 @@ public class MainViewModel extends ViewModel {
             }
             in.close();
         } catch (Exception e) {
-            connectionErrorLiveData.setValue(true);
+            connectionErrorLiveData.postValue(true);
             Timber.d(e.toString());
         }
         Timber.d(resultStr.toString());

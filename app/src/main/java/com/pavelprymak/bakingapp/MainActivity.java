@@ -3,7 +3,6 @@ package com.pavelprymak.bakingapp;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -17,7 +16,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.pavelprymak.bakingapp.presentation.viewModels.MainViewModel;
-import com.pavelprymak.bakingapp.widget.RecipeUpdateWidgetService;
 
 import static com.pavelprymak.bakingapp.presentation.common.Constants.INVALID_RECIPE_ID;
 import static com.pavelprymak.bakingapp.presentation.screens.RecipeInfoFragment.ARG_RECIPE_ID;
@@ -27,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements ShowSnackBarListe
     public NavController mNavController;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mToggle;
+    private MainViewModel mMainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +52,15 @@ public class MainActivity extends AppCompatActivity implements ShowSnackBarListe
             implementInputIntent(getIntent());
         }
 
-        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        mainViewModel.initDbFromNetworkFile();
-        mainViewModel.getRecipes().observe(this, recipeEntities -> {
+        mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mMainViewModel.initDbFromNetworkFile();
+        mMainViewModel.getRecipes().observe(this, recipeEntities -> {
             //TODO
+        });
+        mMainViewModel.getConnectionErrorData().observe(this, isError -> {
+            if (isError) {
+                showConnectionErrorSnackBar();
+            }
         });
     }
 
@@ -98,5 +102,14 @@ public class MainActivity extends AppCompatActivity implements ShowSnackBarListe
     public void showSnack(int messageRes) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), messageRes, Snackbar.LENGTH_LONG);
         snackbar.show();
+    }
+
+    private void showConnectionErrorSnackBar() {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), R.string.error_connection, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(R.string.snack_bar_retry, view -> {
+            snackbar.dismiss();
+            mMainViewModel.initDbFromNetworkFile();
+
+        }).setActionTextColor(getResources().getColor(R.color.colorAccent)).show();
     }
 }

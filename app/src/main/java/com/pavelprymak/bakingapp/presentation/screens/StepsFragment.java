@@ -183,7 +183,7 @@ public class StepsFragment extends Fragment {
 
     @Subscribe
     public void onStepItemClick(EventOnStepItemClick event) {
-        if (event.getRecipeId() != mRecipeId || event.getStepId() != mStepId) {
+        if (event.getRecipeId() != mStepsViewModel.getRecipeId() || event.getStepId() != mStepsViewModel.getStepId()) {
             mStepsViewModel.prepareRecipeItemById(event.getRecipeId());
             mStepsViewModel.getCurrentStepDataById(event.getStepId()).observe(this, currentStep -> {
                 mStepsViewModel.removeObserversCurrentStepData(this);
@@ -232,8 +232,8 @@ public class StepsFragment extends Fragment {
         }
         mToast = Toast.makeText(getContext(), messageRes, Toast.LENGTH_LONG);
         mToast.show();*/
-       if(getActivity() instanceof ShowSnackBarListener){
-           ((ShowSnackBarListener) getActivity()).showSnack(messageRes);
-       }
+        if (getActivity() instanceof ShowSnackBarListener) {
+            ((ShowSnackBarListener) getActivity()).showSnack(messageRes);
+        }
     }
 }
