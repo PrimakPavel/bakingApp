@@ -29,7 +29,6 @@ import static com.pavelprymak.bakingapp.MainActivityTestHelper.isTablet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNot.not;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class StepsFragmentTest {
 
@@ -67,17 +66,15 @@ public class StepsFragmentTest {
     }
 
     @Test
-    public void a_onPrevBtnClickOnFirstElement() {
+    public void onPrevBtnClickOnFirstElement() {
         if (!isTablet()) {
             onView(withId(R.id.prevStepBtn)).perform(click());
             onView(withId(R.id.descriptionShortTv)).check(matches(withText(RECIPE_CARD_FIRST_ITEM_STEP_FIRST_TITLE)));
-            //check toast message
-            onView(withText(R.string.error_step_prev)).inRoot(withDecorView(not(is(mActivityTestRule.getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
         }
     }
 
     @Test
-    public void b_onNextBtnClick() {
+    public void onNextBtnClick() {
         if (!isTablet()) {
             onView(withId(R.id.nextStepBtn)).perform(click());
             onView(withId(R.id.descriptionShortTv)).check(matches(withText(RECIPE_CARD_FIRST_ITEM_STEP_SECOND_TITLE)));

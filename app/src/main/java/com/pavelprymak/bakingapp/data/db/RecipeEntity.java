@@ -29,8 +29,6 @@ public class RecipeEntity {
     @ColumnInfo(name = "steps")
     private List<StepsItem> steps;
 
-    @ColumnInfo(name = "is_favorite")
-    private boolean isFavorite;
 
     public int getId() {
         return id;
@@ -80,11 +78,4 @@ public class RecipeEntity {
         this.steps = steps;
     }
 
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
-    }
 }

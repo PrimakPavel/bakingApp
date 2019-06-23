@@ -23,6 +23,7 @@
     <dimen name="exo_player_btn_width">100dp</dimen>
     <dimen name="exo_player_btn_height">100dp</dimen>
     <dimen name="exo_player_bar_height">26dp</dimen>
+    <dimen name="exo_scrubber_size">10dp</dimen>
 
 
     <dimen name="widget_margin">8dp</dimen>

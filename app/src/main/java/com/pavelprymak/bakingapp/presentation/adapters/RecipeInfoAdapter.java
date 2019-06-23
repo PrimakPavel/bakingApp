@@ -1,6 +1,7 @@
 package com.pavelprymak.bakingapp.presentation.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,7 +118,7 @@ public class RecipeInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     binding.stepDescription.setText(EMPTY);
                 }
                 //LOGO
-                if (stepsItem.getThumbnailURL() != null && !stepsItem.getThumbnailURL().isEmpty()) {
+                if (!TextUtils.isEmpty(stepsItem.getThumbnailURL()) ) {
                     Picasso.get()
                             .load(stepsItem.getThumbnailURL())
                             .error(R.drawable.ic_menu_slideshow)

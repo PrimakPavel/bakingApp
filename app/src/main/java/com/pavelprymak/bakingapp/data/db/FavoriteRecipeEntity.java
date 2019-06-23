@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "favorite_recipe", foreignKeys = @ForeignKey(entity = RecipeEntity.class, parentColumns = "id", childColumns = "recipe_id",onDelete = CASCADE))
+@Entity(tableName = "favorite_recipe")
 public class FavoriteRecipeEntity {
     @PrimaryKey(autoGenerate = true)
     public long id;
@@ -15,8 +15,6 @@ public class FavoriteRecipeEntity {
     @ColumnInfo(name = "recipe_id")
     private int recipeId;
 
-    public FavoriteRecipeEntity() {
-    }
 
     public FavoriteRecipeEntity(int recipeId) {
         this.recipeId = recipeId;

@@ -101,8 +101,8 @@
             app:buffered_color="@color/white80"
             app:played_color="@color/colorAccent"
             app:scrubber_color="@color/colorAccent"
-            app:scrubber_dragged_size="10dp"
-            app:scrubber_enabled_size="10dp"
+            app:scrubber_dragged_size="@dimen/exo_scrubber_size"
+            app:scrubber_enabled_size="@dimen/exo_scrubber_size"
             app:unplayed_color="@color/white50" />
 
         <TextView

@@ -1,6 +1,7 @@
 package com.pavelprymak.bakingapp.presentation.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
             RecipeItem recipeItem = mRecipes.get(position);
             if (recipeItem != null && mContext != null) {
                 //LOGO
-                if (recipeItem.getImage() != null && !recipeItem.getImage().isEmpty()) {
+                if (!TextUtils.isEmpty(recipeItem.getImage())) {
                     Picasso.get()
                             .load(recipeItem.getImage())
                             .into(binding.recipeLogo);

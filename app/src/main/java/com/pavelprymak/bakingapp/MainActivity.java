@@ -54,9 +54,6 @@ public class MainActivity extends AppCompatActivity implements ShowSnackBarListe
 
         mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         mMainViewModel.initDbFromNetworkFile();
-        mMainViewModel.getRecipes().observe(this, recipeEntities -> {
-            //TODO
-        });
         mMainViewModel.getConnectionErrorData().observe(this, isError -> {
             if (isError) {
                 showConnectionErrorSnackBar();

@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.pavelprymak.bakingapp.App;
 import com.pavelprymak.bakingapp.data.Constants;
-import com.pavelprymak.bakingapp.data.db.RecipeEntity;
 import com.pavelprymak.bakingapp.data.pojo.RecipeItem;
 import com.pavelprymak.bakingapp.utils.RecipeItemToRecipeEntityConverter;
 
@@ -38,10 +37,6 @@ public class MainViewModel extends ViewModel {
             if (App.dbRepo.loadRecipesCount() == 0)
                 saveAllToDb(loadFileFromNetwork());
         });
-    }
-
-    public LiveData<List<RecipeEntity>> getRecipes() {
-        return App.dbRepo.loadAllRecipes();
     }
 
     private List<RecipeItem> loadFileFromNetwork() {

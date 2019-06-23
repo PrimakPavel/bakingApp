@@ -4,6 +4,7 @@ package com.pavelprymak.bakingapp.presentation.screens;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,8 +73,8 @@ public class StepsFragment extends Fragment {
         // WAKE_LOCK ON
         ActivityHelper.setWakeLock(getActivity(), true);
 
+        //if tablet not configured full screen mode
         if (getResources().getBoolean(R.bool.isTablet)) return;
-
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             ActivityHelper.setAppBarVisibility(getActivity(), false);
@@ -103,7 +104,7 @@ public class StepsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mRecipeTitle != null && !mRecipeTitle.isEmpty()) {
+        if (!TextUtils.isEmpty(mRecipeTitle)) {
             setAppBarTitle(mRecipeTitle);
         }
         mBinding.nextStepBtn.setOnClickListener(v -> showNextStep());
@@ -130,7 +131,7 @@ public class StepsFragment extends Fragment {
         String stepVideoUrl = stepItem.getVideoURL();
         mPlayerHelper.stopCurrentVideo();
         mPlayerHelper.setResumePosition(resumeWindow, resumePosition);
-        if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+        if (!TextUtils.isEmpty(stepVideoUrl)) {
             Uri uri = Uri.parse(stepVideoUrl);
             mPlayerHelper.initializePlayer(uri);
             if (stepItem.getShortDescription() != null) {
