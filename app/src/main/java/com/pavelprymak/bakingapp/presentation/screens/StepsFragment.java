@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,18 +46,15 @@ public class StepsFragment extends Fragment {
     private int mRecipeId = INVALID_RECIPE_ID;
     private int mStepId = INVALID_STEP_ID;
     private String mRecipeTitle;
-    private Bundle mSaveInstanceSate;
 
 
     private FragmentStepsBinding mBinding;
     private PlayerHelper mPlayerHelper;
     private StepsViewModel mStepsViewModel;
-    private Toast mToast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSaveInstanceSate = savedInstanceState;
         if (getArguments() != null) {
             mRecipeId = getArguments().getInt(ARG_RECIPE_ID, INVALID_RECIPE_ID);
             mRecipeTitle = getArguments().getString(ARG_RECIPE_TITLE);
@@ -112,6 +108,19 @@ public class StepsFragment extends Fragment {
         }
         mBinding.nextStepBtn.setOnClickListener(v -> showNextStep());
         mBinding.prevStepBtn.setOnClickListener(v -> showPrevStep());
+        //Load current step
+        LiveData<StepsItem> currentStepData = mStepsViewModel.getCurrentStepData();
+        if (savedInstanceState == null) {
+            currentStepData = mStepsViewModel.getCurrentStepDataById(mStepId);
+        }
+        currentStepData.observe(this, currentStepItem -> {
+            mStepsViewModel.removeObserversCurrentStepData(this);
+            if (currentStepItem != null) {
+                showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
+            } else {
+                showErrorMessage(R.string.error_step_load);
+            }
+        });
     }
 
     private void showStepInfo(StepsItem stepItem, int resumeWindow, long resumePosition) {
@@ -128,7 +137,7 @@ public class StepsFragment extends Fragment {
                 mPlayerHelper.setMediaDescriptionText(stepItem.getShortDescription());
             }
         } else {
-            showToast(R.string.error_video_url);
+            showErrorMessage(R.string.error_video_url);
 
         }
         mBinding.descriptionShortTv.setText(stepItem.getShortDescription());
@@ -138,29 +147,17 @@ public class StepsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //Load current step
-        LiveData<StepsItem> currentStepData = mStepsViewModel.getCurrentStepData();
-        if (mSaveInstanceSate == null) {
-            currentStepData = mStepsViewModel.getCurrentStepDataById(mStepId);
-        }
-        currentStepData.observe(this, currentStepItem -> {
-            mStepsViewModel.removeObserversCurrentStepData(this);
-            if (currentStepItem != null) {
-                showStepInfo(currentStepItem, mResumeWindow, mResumePosition);
-            } else {
-                showToast(R.string.error_step_load);
-            }
-        });
+        if (mPlayerHelper != null)
+            mPlayerHelper.playVideo();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         if (mPlayerHelper != null) {
-            mPlayerHelper.releasePlayer();
+            mPlayerHelper.pauseVideo();
             mResumeWindow = mPlayerHelper.getCurrentResumeWindow();
             mResumePosition = mPlayerHelper.getCurrentResumePosition();
-            mPlayerHelper = null;
         }
     }
 
@@ -174,6 +171,10 @@ public class StepsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mPlayerHelper != null) {
+            mPlayerHelper.releasePlayer();
+            mPlayerHelper = null;
+        }
         App.eventBus.unregister(this);
         mStepsViewModel.removeObserversAll(this);
         ActivityHelper.setWakeLock(getActivity(), false);
@@ -200,7 +201,7 @@ public class StepsFragment extends Fragment {
             if (nextStep != null) {
                 showStepInfo(nextStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
             } else {
-                showToast(R.string.error_step_next);
+                showErrorMessage(R.string.error_step_next);
             }
         });
     }
@@ -211,7 +212,7 @@ public class StepsFragment extends Fragment {
             if (prevStep != null) {
                 showStepInfo(prevStep, DEFAULT_RESUME_WINDOW, DEFAULT_RESUME_POSITION);
             } else {
-                showToast(R.string.error_step_prev);
+                showErrorMessage(R.string.error_step_prev);
             }
         });
 
@@ -226,12 +227,7 @@ public class StepsFragment extends Fragment {
         }
     }
 
-    private void showToast(int messageRes) {
-       /* if (mToast != null) {
-            mToast.cancel();
-        }
-        mToast = Toast.makeText(getContext(), messageRes, Toast.LENGTH_LONG);
-        mToast.show();*/
+    private void showErrorMessage(int messageRes) {
         if (getActivity() instanceof ShowSnackBarListener) {
             ((ShowSnackBarListener) getActivity()).showSnack(messageRes);
         }

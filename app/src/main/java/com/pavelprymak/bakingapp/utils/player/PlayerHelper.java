@@ -105,6 +105,18 @@ public class PlayerHelper implements Player.EventListener {
         }
     }
 
+    public void pauseVideo() {
+        if (mExoPlayer != null) {
+            mExoPlayer.setPlayWhenReady(false);
+        }
+    }
+
+    public void playVideo() {
+        if (mExoPlayer != null) {
+            mExoPlayer.setPlayWhenReady(true);
+        }
+    }
+
     public void setMediaDescriptionText(String mediaDescriptionsText) {
         mVideoDescription = mediaDescriptionsText;
     }
@@ -140,10 +152,20 @@ public class PlayerHelper implements Player.EventListener {
     }
 
     public int getCurrentResumeWindow() {
+        if (mExoPlayer != null) {
+            resumeWindow = mExoPlayer.getCurrentWindowIndex();
+        } else {
+            resumeWindow = DEFAULT_RESUME_WINDOW;
+        }
         return resumeWindow;
     }
 
     public long getCurrentResumePosition() {
+        if (mExoPlayer != null) {
+            resumePosition = Math.max(0, mExoPlayer.getContentPosition());
+        } else {
+            resumePosition = DEFAULT_RESUME_POSITION;
+        }
         return resumePosition;
     }
 
@@ -154,24 +176,33 @@ public class PlayerHelper implements Player.EventListener {
     public class MySessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
-            mExoPlayer.setPlayWhenReady(true);
+            if (mExoPlayer != null)
+                mExoPlayer.setPlayWhenReady(true);
         }
 
         @Override
         public void onPause() {
-            mExoPlayer.setPlayWhenReady(false);
+
+            if (mExoPlayer != null)
+                mExoPlayer.setPlayWhenReady(false);
         }
 
         @Override
         public void onSkipToPrevious() {
-            mExoPlayer.seekTo(0);
+            if (mExoPlayer != null)
+                mExoPlayer.seekTo(0);
         }
 
     }
 
     private void updateResumePosition() {
-        resumeWindow = mExoPlayer.getCurrentWindowIndex();
-        resumePosition = Math.max(0, mExoPlayer.getContentPosition());
+        if (mExoPlayer != null) {
+            resumeWindow = mExoPlayer.getCurrentWindowIndex();
+            resumePosition = Math.max(0, mExoPlayer.getContentPosition());
+        } else {
+            resumeWindow = DEFAULT_RESUME_WINDOW;
+            resumePosition = DEFAULT_RESUME_POSITION;
+        }
     }
 
     private DataSource.Factory buildDataSourceFactory(Context context, String userAgent) {
@@ -228,11 +259,14 @@ public class PlayerHelper implements Player.EventListener {
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_BUFFERING) {
-            mProgressBar.setVisibility(View.VISIBLE);
+            if (mProgressBar != null)
+                mProgressBar.setVisibility(View.VISIBLE);
         }
         if (playbackState == Player.STATE_ENDED) {
-            mPlayerView.hideController();
-            mProgressBar.setVisibility(View.GONE);
+            if (mPlayerView != null)
+                mPlayerView.showController();
+            if (mProgressBar != null)
+                mProgressBar.setVisibility(View.GONE);
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonAudioFocus();
             }
@@ -245,15 +279,18 @@ public class PlayerHelper implements Player.EventListener {
             if ((playbackState == Player.STATE_READY) && playWhenReady) {
                 mMediaSessionHelper.getStateBuilder().setState(PlaybackStateCompat.STATE_PLAYING,
                         mExoPlayer.getCurrentPosition(), 1f);
-                mProgressBar.setVisibility(View.GONE);
+                if (mProgressBar != null)
+                    mProgressBar.setVisibility(View.GONE);
             } else if ((playbackState == Player.STATE_READY)) {
                 mMediaSessionHelper.getStateBuilder().setState(PlaybackStateCompat.STATE_PAUSED,
                         mExoPlayer.getCurrentPosition(), 1f);
-                mProgressBar.setVisibility(View.GONE);
+                if (mProgressBar != null)
+                    mProgressBar.setVisibility(View.GONE);
             }
             mMediaSessionHelper.getMediaSession().setPlaybackState(mMediaSessionHelper.getStateBuilder().build());
         } else if ((playbackState == Player.STATE_READY)) {
-            mProgressBar.setVisibility(View.GONE);
+            if (mProgressBar != null)
+                mProgressBar.setVisibility(View.GONE);
         }
 
         //SHOW NOTIFICATION
